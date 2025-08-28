@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">OpalTest</string>
+
+    <string name="referral_subtitle">Give a friend unlimited access to Opal Pro, including unlimited schedules, app limits, deep focus, allow lists and more!</string>
+    <string name="referral_code">Your referral code</string>
+    <string name="referral_button_add_friend">Add Friends</string>
+    <string name="referral_button_share_link">Share Referral Link</string>
+    <string name="referral_next_unlock">Next Unlock:</string>
+    <string name="referral_referee_count">Your referred</string>
+
+    <plurals name="reward_threshold_count">
+        <item quantity="one">%d friend</item>
+        <item quantity="other">%d friends</item>
+    </plurals>
+    <string name="reward_1_title">Loyal Gem</string>
+    <string name="reward_1_subtitle">Unlock this special MileStone</string>
+    <string name="reward_2_title">Reputation Gem</string>
+    <string name="reward_2_subtitle">Unlock this special MileStone</string>
+    <string name="reward_3_title">Popular Gem</string>
+    <string name="reward_3_subtitle">Unlock this special MileStone</string>
+    <string name="reward_4_title">2 years of PRO</string>
+    <string name="reward_4_subtitle">Contact us to get 2 years of Opal Pro</string>
+    <string name="reward_5_title">Lifetime of PRO</string>
+    <string name="reward_5_subtitle">Contact us to get a Lifetime of Opal Pro</string>
+    <string name="reward_6_title">Life-changing Gear</string>
+    <string name="reward_6_subtitle">Contact us for free specially designed Opal gear</string>
+
+    <string name="settings_bottom_sheet_title">Simulate referred users count</string>
+    <string name="settings_bottom_sheet_button">Apply (1s delay)</string>
+</resources>
