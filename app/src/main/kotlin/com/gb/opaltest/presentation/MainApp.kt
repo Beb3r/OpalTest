@@ -96,7 +96,6 @@ fun MainApp(
                             content = {
                                 HomeScreen(
                                     onScrolled = {
-                                        Timber.d("TEEST $it")
                                         ambienBackgroundOffset = it
                                     }
                                 )

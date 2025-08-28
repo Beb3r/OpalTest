@@ -3,10 +3,14 @@ package com.gb.opaltest.features.home.presentation.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -25,19 +29,21 @@ import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.gb.opaltest.core.design.Body
 import com.gb.opaltest.core.design.Colors
 import com.gb.opaltest.core.design.Label
-import com.gb.opaltest.core.design.components.AppLinearProgressIndicator
 import com.gb.opaltest.core.design.LocalAppThemeData
 import com.gb.opaltest.core.design.TextSize
 import com.gb.opaltest.core.design.TextWeight
+import com.gb.opaltest.core.design.components.AppLinearProgressIndicator
 import com.gb.opaltest.core.translations.toValue
 import com.gb.opaltest.features.home.presentation.models.HomeRewardFooterUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeRewardUiModel
 import com.gb.opaltest.core.design.R.drawable as drawables
+import com.gb.opaltest.core.translations.R.string as translations
 
 @Composable
 fun HomeReward(
@@ -102,7 +108,7 @@ fun HomeReward(
                                 drawRect(brush, blendMode = BlendMode.SrcAtop)
                             }
                         },
-                    text = reward.friendsCount.toValue(context = context),
+                    text = reward.threshold.toValue(context = context),
                     textWeight = TextWeight.BOLD,
                     textSize = TextSize.MEDIUM,
                     textColor = Colors.LightGrey,
@@ -123,6 +129,7 @@ fun HomeReward(
                 )
                 HomeRewardFooter(
                     modifier = Modifier.padding(top = 8.dp),
+                    rewardId = reward.id,
                     footer = reward.footer,
                     detailsContainerWidth = detailsContainerWidth
                 )
@@ -131,7 +138,7 @@ fun HomeReward(
         if (!isLast()) {
             Icon(
                 modifier = Modifier.padding(top = 10.dp),
-                painter = painterResource(drawables.ic__arrow_downward),
+                painter = painterResource(drawables.ic_arrow_down),
                 contentDescription = "reward image",
                 tint = Colors.MediumGrey,
             )
@@ -142,6 +149,7 @@ fun HomeReward(
 @Composable
 fun HomeRewardFooter(
     modifier: Modifier,
+    rewardId: String,
     footer: HomeRewardFooterUiModel,
     detailsContainerWidth: Dp,
 ) {
@@ -163,8 +171,45 @@ fun HomeRewardFooter(
         }
 
         is HomeRewardFooterUiModel.Unlocked -> {
+            if (footer is HomeRewardFooterUiModel.Unlocked.UnClaimed) {
+                Label(
+                    modifier = modifier
+                        .background(Colors.White, shape = RoundedCornerShape(16.dp))
+                        .clickable {
+                            footer.onClick(rewardId)
+                        }
+                        .padding(horizontal = 24.dp, vertical = 6.dp),
+                    text = stringResource(translations.reward_button_claim),
+                    textWeight = TextWeight.BOLD,
+                    textSize = TextSize.MEDIUM,
+                    textColor = Colors.Black,
+                )
+            } else {
+                Row(
+                    modifier = modifier
+                        .background(
+                            color = Colors.DarkGrey,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .padding(horizontal = 24.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(drawables.ic_check),
+                        contentDescription = null,
+                        tint = Colors.LightGrey,
+                    )
 
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Label(
+                        text = stringResource(translations.reward_button_claimed),
+                        textWeight = TextWeight.BOLD,
+                        textSize = TextSize.MEDIUM,
+                        textColor = Colors.LightGrey,
+                    )
+                }
+            }
         }
     }
-
 }

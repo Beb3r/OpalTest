@@ -1,7 +1,9 @@
 package com.gb.opaltest.features.home.domain.models
 
+import com.gb.opaltest.features.referral.domain.models.ReferredUserDomainModel
+
 data class HomeDataDomainModel(
-    val referredUsersCount: Int,
+    val referredUsers: List<ReferredUserDomainModel>,
     val rewards: List<HomeRewardDomainModel>,
 )
 

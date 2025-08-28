@@ -9,6 +9,7 @@ import com.gb.opaltest.features.home.domain.use_cases.ObserveHomeDataUseCase
 import com.gb.opaltest.features.home.presentation.mappers.toHomeRewardUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeViewStateUiModel
 import com.gb.opaltest.features.referral.domain.use_cases.SetReferredUsersUseCase
+import com.gb.opaltest.features.rewards.domain.use_cases.SetClaimedRewardIdUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ class HomeViewModel(
     observeHomeDataUseCase: ObserveHomeDataUseCase,
     private val appCoroutineDispatchers: AppCoroutineDispatchers,
     private val setReferredUseCase: SetReferredUsersUseCase,
+    private val setClaimedRewardIdUseCase: SetClaimedRewardIdUseCase,
 ) : ViewModel() {
 
     private val shouldShowSettingsBottomSheetFlow = MutableStateFlow(false)
@@ -61,6 +63,8 @@ class HomeViewModel(
     }
 
     private fun onClaimRewardClicked(rewardId: String) {
-
+        viewModelScope.launch(appCoroutineDispatchers.io) {
+            setClaimedRewardIdUseCase(id = rewardId)
+        }
     }
 }

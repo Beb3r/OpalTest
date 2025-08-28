@@ -2,24 +2,22 @@ package com.gb.opaltest.features.home.presentation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -33,12 +31,15 @@ import com.gb.opaltest.core.design.Colors
 import com.gb.opaltest.core.design.TextSize
 import com.gb.opaltest.core.design.TextWeight
 import com.gb.opaltest.core.design.Title
-import com.gb.opaltest.features.home.presentation.components.HomeAddFriendButton
+import com.gb.opaltest.core.design.components.PrimaryButton
+import com.gb.opaltest.core.design.components.SecondaryButton
 import com.gb.opaltest.features.home.presentation.components.HomeReferralCard
 import com.gb.opaltest.features.home.presentation.components.HomeReferralCode
 import com.gb.opaltest.features.home.presentation.components.HomeReward
 import com.gb.opaltest.features.home.presentation.components.HomeSettingsBottomSheet
-import com.gb.opaltest.features.home.presentation.components.HomeShareButton
+import com.gb.opaltest.features.home.presentation.components.HomeSummary
+import com.gb.opaltest.features.home.presentation.models.HomeCurrentRewardUiModel
+import com.gb.opaltest.features.home.presentation.models.HomeReferredUserUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeRewardUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeSettingsBottomSheetViewState
 import kotlinx.collections.immutable.PersistentList
@@ -56,7 +57,8 @@ fun HomeScreen(
 
     HomeScreenContent(
         referralCode = viewState.referralCode,
-        referredUsersCount = viewState.referredUsersCount,
+        currentReward = viewState.currentReward,
+        referredUsers = viewState.referredUsers,
         rewards = viewState.rewards,
         onSettingsClicked = viewState.onSettingsClicked,
         settingsBottomSheetViewState = viewState.settingsBottomSheetViewState,
@@ -69,7 +71,8 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     referralCode: String,
-    referredUsersCount: String,
+    currentReward: HomeCurrentRewardUiModel,
+    referredUsers: PersistentList<HomeReferredUserUiModel>,
     rewards: PersistentList<HomeRewardUiModel>,
     onSettingsClicked: () -> Unit,
     settingsBottomSheetViewState: HomeSettingsBottomSheetViewState,
@@ -135,8 +138,63 @@ fun HomeScreenContent(
         }
 
         item {
-            HomeAddFriendButton(onClick = {})
-            HomeShareButton(onClick = {})
+            PrimaryButton(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(),
+                content = {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(drawables.ic_add_friend),
+                        contentDescription = null,
+                        tint = Colors.Black,
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Body(
+                        text = stringResource(translations.referral_button_add_friend),
+                        textAlign = TextAlign.Center,
+                        textWeight = TextWeight.SEMI_BOLD,
+                        textSize = TextSize.LARGE,
+                        textColor = Colors.Black,
+                    )
+                },
+                onClick = {}
+            )
+            SecondaryButton(
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .fillMaxWidth(),
+                content = {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(drawables.ic_share),
+                        contentDescription = null,
+                        tint = Colors.Black,
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Body(
+                        text = stringResource(translations.referral_button_share_link),
+                        textAlign = TextAlign.Center,
+                        textWeight = TextWeight.SEMI_BOLD,
+                        textSize = TextSize.LARGE,
+                        textColor = Colors.Black,
+                    )
+                },
+                onClick = {}
+            )
+        }
+
+        item {
+            HomeSummary(
+                modifier = Modifier
+                    .padding(top = 12.dp, bottom = 48.dp),
+                currentReward = currentReward,
+                referredUsers = referredUsers,
+            )
         }
 
         itemsIndexed(items = rewards, key = { _, reward -> reward.id }) { index, reward ->

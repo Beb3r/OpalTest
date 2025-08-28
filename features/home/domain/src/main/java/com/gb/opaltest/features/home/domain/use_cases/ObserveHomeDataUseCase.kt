@@ -27,7 +27,7 @@ class ObserveHomeDataUseCase(
         ).mapLatest { (rewards, referredUsers, claimedRewardIds) ->
             val referredUsersCount = referredUsers.size
             HomeDataDomainModel(
-                referredUsersCount = referredUsers.size,
+                referredUsers = referredUsers.toList(),
                 rewards = rewards.map { reward ->
                     HomeRewardDomainModel(
                         id = reward.id,

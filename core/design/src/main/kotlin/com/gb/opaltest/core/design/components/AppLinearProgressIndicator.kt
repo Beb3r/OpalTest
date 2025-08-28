@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import timber.log.Timber
 
 @Composable
 fun AppLinearProgressIndicator(
@@ -26,7 +25,6 @@ fun AppLinearProgressIndicator(
     foregroundColor: Brush,
     progress: Float,
 ) {
-    Timber.d("TEEST progress: $progress")
     val animatedProgress by animateFloatAsState(
         targetValue = progress.coerceIn(0f, 1f),
     )

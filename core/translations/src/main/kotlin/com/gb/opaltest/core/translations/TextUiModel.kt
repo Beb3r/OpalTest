@@ -2,7 +2,6 @@ package com.gb.opaltest.core.translations
 
 import android.content.Context
 import androidx.annotation.PluralsRes
-import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 
 @Immutable
@@ -11,13 +10,13 @@ sealed interface TextUiModel {
     data class Plain(val text: String) : TextUiModel
 
     @Immutable
-    data class String(@StringRes val resId: Int, val formatArgs: Array<Any> = arrayOf()) :
+    data class StringRes(@androidx.annotation.StringRes val resId: Int, val formatArgs: Array<Any> = arrayOf()) :
         TextUiModel {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
 
-            other as String
+            other as TextUiModel.StringRes
 
             if (resId != other.resId) return false
             if (!formatArgs.contentEquals(other.formatArgs)) return false
@@ -33,7 +32,7 @@ sealed interface TextUiModel {
     }
 
     @Immutable
-    data class Plural(
+    data class PluralRes(
         @PluralsRes val resId: Int,
         val quantity: Int,
         val formatArgs: Array<Any> = arrayOf()
@@ -42,7 +41,7 @@ sealed interface TextUiModel {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
 
-            other as Plural
+            other as PluralRes
 
             if (resId != other.resId) return false
             if (quantity != other.quantity) return false
@@ -65,7 +64,7 @@ fun TextUiModel.toValue(
 ): String =
     when (this) {
         is TextUiModel.Plain -> this.text
-        is TextUiModel.String -> {
+        is TextUiModel.StringRes -> {
             if (this.formatArgs.isEmpty()) {
                 context.getString(this.resId)
             } else {
@@ -73,11 +72,11 @@ fun TextUiModel.toValue(
             }
         }
 
-        is TextUiModel.Plural -> {
+        is TextUiModel.PluralRes -> {
             if (this.formatArgs.isEmpty()) {
                 context.resources.getQuantityString(this.resId, this.quantity)
             } else {
                 context.resources.getQuantityString(this.resId, this.quantity, *this.formatArgs)
             }
         }
-    } as String
+    }

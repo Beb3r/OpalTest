@@ -6,8 +6,10 @@
     <string name="referral_code">Your referral code</string>
     <string name="referral_button_add_friend">Add Friends</string>
     <string name="referral_button_share_link">Share Referral Link</string>
-    <string name="referral_next_unlock">Next Unlock:</string>
+    <string name="referral_next_reward">Next Reward:</string>
+    <string name="referral_next_unlock">New Reward to unlock:</string>
     <string name="referral_referee_count">Your referred</string>
+    <string name="referral_referee_signup_date">Signed up on %1$s</string>
 
     <plurals name="reward_threshold_count">
         <item quantity="one">%d friend</item>
@@ -25,6 +27,8 @@
     <string name="reward_5_subtitle">Contact us to get a Lifetime of Opal Pro</string>
     <string name="reward_6_title">Life-changing Gear</string>
     <string name="reward_6_subtitle">Contact us for free specially designed Opal gear</string>
+    <string name="reward_button_claimed">Claimed</string>
+    <string name="reward_button_claim">Claim</string>
 
     <string name="settings_bottom_sheet_title">Simulate referred users count</string>
     <string name="settings_bottom_sheet_button">Apply (1s delay)</string>
