@@ -5,17 +5,22 @@ import androidx.lifecycle.viewModelScope
 import com.gb.opaltest.core.common.combines
 import com.gb.opaltest.core.common.dispatchers.AppCoroutineDispatchers
 import com.gb.opaltest.core.common.stateIn
+import com.gb.opaltest.core.translations.TextUiModel
 import com.gb.opaltest.features.home.domain.use_cases.ObserveHomeDataUseCase
 import com.gb.opaltest.features.home.presentation.mappers.toHomeRewardUiModel
+import com.gb.opaltest.features.home.presentation.models.HomeEventsUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeViewStateUiModel
 import com.gb.opaltest.features.referral.domain.use_cases.SetReferredUsersUseCase
 import com.gb.opaltest.features.rewards.domain.use_cases.SetClaimedRewardIdUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import com.gb.opaltest.core.translations.R.string as translations
 
 @KoinViewModel
 class HomeViewModel(
@@ -26,6 +31,9 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private val shouldShowSettingsBottomSheetFlow = MutableStateFlow(false)
+
+    private val _eventsFlow = MutableSharedFlow<HomeEventsUiModel>()
+    val eventsFlow = _eventsFlow.asSharedFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val viewState = combines(
@@ -38,6 +46,8 @@ class HomeViewModel(
             shouldShowSettingsBottomSheet = shouldShowSettingsBottomSheet,
             onSettingsBottomSheetClosed = ::onSettingsBottomSheetClosed,
             onSettingsBottomSheetButtonClicked = ::onSettingsBottomSheetButtonClicked,
+            onAddFriendButtonClicked = ::onAddFriendButtonClicked,
+            onShareLinkButtonClicked = ::onShareLinkButtonClicked,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -51,7 +61,9 @@ class HomeViewModel(
     }
 
     private fun onSettingsBottomSheetClosed() {
-        shouldShowSettingsBottomSheetFlow.value = false
+        viewModelScope.launch {
+            shouldShowSettingsBottomSheetFlow.value = false
+        }
     }
 
     private fun onSettingsBottomSheetButtonClicked(referredUsersCount: Int) {
@@ -65,6 +77,26 @@ class HomeViewModel(
     private fun onClaimRewardClicked(rewardId: String) {
         viewModelScope.launch(appCoroutineDispatchers.io) {
             setClaimedRewardIdUseCase(id = rewardId)
+        }
+    }
+
+    private fun onAddFriendButtonClicked(referralCode: String) {
+        val message = TextUiModel.StringRes(
+            resId = translations.referral_share_link_message,
+            formatArgs = arrayOf(referralCode)
+        )
+        viewModelScope.launch {
+            _eventsFlow.emit(HomeEventsUiModel.ShareLink(message = message))
+        }
+    }
+
+    private fun onShareLinkButtonClicked(referralCode: String) {
+        val message = TextUiModel.StringRes(
+            resId = translations.referral_share_link_message,
+            formatArgs = arrayOf(referralCode)
+        )
+        viewModelScope.launch {
+            _eventsFlow.emit(HomeEventsUiModel.ShareLink(message = message))
         }
     }
 }

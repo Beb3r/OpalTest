@@ -10,6 +10,7 @@
     <string name="referral_next_unlock">New Reward to unlock:</string>
     <string name="referral_referee_count">Your referred</string>
     <string name="referral_referee_signup_date">Signed up on %1$s</string>
+    <string name="referral_share_link_message">This app helped me reduced by half my screen time. Use my referral code "%1$s" to get a free month of Opal Pro!</string>
 
     <plurals name="reward_threshold_count">
         <item quantity="one">%d friend</item>

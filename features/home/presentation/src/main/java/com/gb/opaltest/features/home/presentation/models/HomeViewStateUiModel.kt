@@ -13,6 +13,8 @@ data class HomeViewStateUiModel(
     val rewards: PersistentList<HomeRewardUiModel>,
     val onSettingsClicked: () -> Unit,
     val settingsBottomSheetViewState: HomeSettingsBottomSheetViewState,
+    val onAddFriendButtonClicked: (String) -> Unit,
+    val onShareLinkButtonClicked: (String) -> Unit,
 ) {
     companion object {
         val DEFAULT = HomeViewStateUiModel(
@@ -22,6 +24,8 @@ data class HomeViewStateUiModel(
             rewards = persistentListOf(),
             onSettingsClicked = { },
             settingsBottomSheetViewState = HomeSettingsBottomSheetViewState.Hidden,
+            onAddFriendButtonClicked = { },
+            onShareLinkButtonClicked = { },
         )
     }
 }

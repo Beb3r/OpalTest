@@ -30,6 +30,8 @@ fun HomeDataDomainModel.toHomeRewardUiModel(
     shouldShowSettingsBottomSheet: Boolean,
     onSettingsBottomSheetClosed: () -> Unit,
     onSettingsBottomSheetButtonClicked: (Int) -> Unit,
+    onAddFriendButtonClicked: (String) -> Unit,
+    onShareLinkButtonClicked: (String) -> Unit,
 ): HomeViewStateUiModel {
     val settingsBottomSheetViewState = getSettingsBottomSheetViewState(
         shouldShowSettingsBottomSheet = shouldShowSettingsBottomSheet,
@@ -57,6 +59,8 @@ fun HomeDataDomainModel.toHomeRewardUiModel(
             it.toHomeRewardUiModel(onClaimedRewardClicked = onClaimedRewardClicked)
         }.toPersistentList(),
         settingsBottomSheetViewState = settingsBottomSheetViewState,
+        onAddFriendButtonClicked = onAddFriendButtonClicked,
+        onShareLinkButtonClicked = onShareLinkButtonClicked,
     )
 }
 
