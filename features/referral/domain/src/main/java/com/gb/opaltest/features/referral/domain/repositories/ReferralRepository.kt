@@ -16,4 +16,8 @@ class ReferralRepository(
     suspend fun setReferredUsers(users: Set<ReferredUserDomainModel>) {
         dataSource.setReferredUsers(users = users)
     }
+
+    suspend fun clearReferredUsers() {
+        dataSource.clearReferredUsers()
+    }
 }

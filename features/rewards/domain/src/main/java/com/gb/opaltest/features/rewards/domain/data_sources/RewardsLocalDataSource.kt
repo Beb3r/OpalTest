@@ -10,4 +10,6 @@ interface RewardsLocalDataSource {
     fun observeClaimedRewardIds(): Flow<Set<String>>
 
     suspend fun setClaimedRewardId(id: String)
+
+    suspend fun clearClaimedRewards()
 }

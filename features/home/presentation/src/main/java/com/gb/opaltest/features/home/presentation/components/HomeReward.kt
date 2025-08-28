@@ -179,7 +179,7 @@ fun HomeRewardFooter(
                             footer.onClick(rewardId)
                         }
                         .padding(horizontal = 24.dp, vertical = 6.dp),
-                    text = stringResource(translations.reward_button_claim),
+                    text = stringResource(translations.home_reward_button_claim),
                     textWeight = TextWeight.BOLD,
                     textSize = TextSize.MEDIUM,
                     textColor = Colors.Black,
@@ -203,7 +203,7 @@ fun HomeRewardFooter(
 
                     Spacer(modifier = Modifier.width(8.dp))
                     Label(
-                        text = stringResource(translations.reward_button_claimed),
+                        text = stringResource(translations.home_reward_button_claimed),
                         textWeight = TextWeight.BOLD,
                         textSize = TextSize.MEDIUM,
                         textColor = Colors.LightGrey,

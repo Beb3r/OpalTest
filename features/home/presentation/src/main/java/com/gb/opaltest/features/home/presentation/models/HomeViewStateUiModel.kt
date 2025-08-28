@@ -8,24 +8,28 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class HomeViewStateUiModel(
     val referralCode: String,
+    val onAddFriendButtonClicked: (String) -> Unit,
+    val onShareLinkButtonClicked: (String) -> Unit,
     val currentReward: HomeCurrentRewardUiModel,
     val referredUsers: PersistentList<HomeReferredUserUiModel>,
     val rewards: PersistentList<HomeRewardUiModel>,
-    val onSettingsClicked: () -> Unit,
+    val onSettingsSimulateReferralsClicked: () -> Unit,
+    val onSettingsPickGemClicked: () -> Unit,
+    val onSettingsClearClicked: () -> Unit,
     val settingsBottomSheetViewState: HomeSettingsBottomSheetViewState,
-    val onAddFriendButtonClicked: (String) -> Unit,
-    val onShareLinkButtonClicked: (String) -> Unit,
 ) {
     companion object {
         val DEFAULT = HomeViewStateUiModel(
             referralCode = "-----",
+            onAddFriendButtonClicked = { },
+            onShareLinkButtonClicked = { },
             currentReward = HomeCurrentRewardUiModel.Hidden,
             referredUsers = persistentListOf(),
             rewards = persistentListOf(),
-            onSettingsClicked = { },
+            onSettingsSimulateReferralsClicked = { },
+            onSettingsPickGemClicked = { },
+            onSettingsClearClicked = { },
             settingsBottomSheetViewState = HomeSettingsBottomSheetViewState.Hidden,
-            onAddFriendButtonClicked = { },
-            onShareLinkButtonClicked = { },
         )
     }
 }

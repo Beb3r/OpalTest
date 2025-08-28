@@ -46,4 +46,10 @@ class ReferralLocalDataSourceImpl(
             preferences[KEY_REFERRED_USERS] = users.map { json.encodeToString(it) }.toSet()
         }
     }
+
+    override suspend fun clearReferredUsers() {
+        dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
 }

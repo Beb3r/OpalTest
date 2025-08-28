@@ -25,13 +25,15 @@ import com.gb.opaltest.core.design.R.drawable as drawables
 import com.gb.opaltest.core.translations.R.string as translations
 
 fun HomeDataDomainModel.toHomeRewardUiModel(
-    onSettingsClicked: () -> Unit,
+    onSettingsSimulateReferralsClicked: () -> Unit,
     onClaimedRewardClicked: (String) -> Unit,
     shouldShowSettingsBottomSheet: Boolean,
     onSettingsBottomSheetClosed: () -> Unit,
     onSettingsBottomSheetButtonClicked: (Int) -> Unit,
     onAddFriendButtonClicked: (String) -> Unit,
     onShareLinkButtonClicked: (String) -> Unit,
+    onSettingsPickGemClicked: () -> Unit,
+    onSettingsClearClicked: () -> Unit,
 ): HomeViewStateUiModel {
     val settingsBottomSheetViewState = getSettingsBottomSheetViewState(
         shouldShowSettingsBottomSheet = shouldShowSettingsBottomSheet,
@@ -52,15 +54,17 @@ fun HomeDataDomainModel.toHomeRewardUiModel(
 
     return HomeViewStateUiModel(
         referralCode = "X3FRR",
+        onAddFriendButtonClicked = onAddFriendButtonClicked,
+        onShareLinkButtonClicked = onShareLinkButtonClicked,
         currentReward = currentReward,
         referredUsers = this.referredUsers.map { it.toUiModel(dateFormatter) }.toPersistentList(),
-        onSettingsClicked = onSettingsClicked,
         rewards = this.rewards.map {
             it.toHomeRewardUiModel(onClaimedRewardClicked = onClaimedRewardClicked)
         }.toPersistentList(),
+        onSettingsSimulateReferralsClicked = onSettingsSimulateReferralsClicked,
+        onSettingsPickGemClicked = onSettingsPickGemClicked,
+        onSettingsClearClicked = onSettingsClearClicked,
         settingsBottomSheetViewState = settingsBottomSheetViewState,
-        onAddFriendButtonClicked = onAddFriendButtonClicked,
-        onShareLinkButtonClicked = onShareLinkButtonClicked,
     )
 }
 
@@ -77,7 +81,7 @@ private fun getCurrentReward(
             HomeCurrentRewardUiModel.Visible.UnClaimed(
                 imageDrawableResId = getGemDrawable(rewardToClaim.id),
                 title = TextUiModel.StringRes(getGemTitle(rewardToClaim.id)),
-                subtitle = TextUiModel.StringRes(translations.referral_next_unlock),
+                subtitle = TextUiModel.StringRes(translations.home_referral_next_unlock),
                 id = rewardToClaim.id,
                 onClick = onClaimedRewardClicked,
             )
@@ -87,7 +91,7 @@ private fun getCurrentReward(
             HomeCurrentRewardUiModel.Visible.InProgress(
                 imageDrawableResId = getGemDrawable(rewardInProgress.id),
                 title = TextUiModel.StringRes(getGemTitle(rewardInProgress.id)),
-                subtitle = TextUiModel.StringRes(translations.referral_next_reward),
+                subtitle = TextUiModel.StringRes(translations.home_referral_next_reward),
                 progress = (rewardInProgress.state as HomeRewardDomainModel.HomeRewardStateDomainModel.InProgress).progress,
                 total = (rewardInProgress.state as HomeRewardDomainModel.HomeRewardStateDomainModel.InProgress).total,
             )
@@ -105,7 +109,7 @@ private fun ReferredUserDomainModel.toUiModel(dataFormat: DateFormat): HomeRefer
         id = this.id,
         name = this.name,
         signUpdate = TextUiModel.StringRes(
-            translations.referral_referee_signup_date,
+            translations.home_referral_referred_user_signup_date,
             arrayOf(formatedDate)
         ),
     )
@@ -128,7 +132,7 @@ private fun HomeRewardDomainModel.toHomeRewardUiModel(
         id = this.id,
         imageDrawableResId = drawableResId,
         threshold = TextUiModel.PluralRes(
-            plurals.reward_threshold_count,
+            plurals.home_reward_threshold_count,
             this.threshold,
             arrayOf(this.threshold)
         ),

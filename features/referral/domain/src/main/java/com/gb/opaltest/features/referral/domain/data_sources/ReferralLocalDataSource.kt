@@ -8,4 +8,6 @@ interface ReferralLocalDataSource {
     fun observeReferredUsers(): Flow<Set<ReferredUserDomainModel>>
 
     suspend fun setReferredUsers(users: Set<ReferredUserDomainModel>)
+
+    suspend fun clearReferredUsers()
 }

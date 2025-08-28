@@ -2,20 +2,21 @@
 <resources>
     <string name="app_name" translatable="false">OpalTest</string>
 
-    <string name="referral_subtitle">Give a friend unlimited access to Opal Pro, including unlimited schedules, app limits, deep focus, allow lists and more!</string>
-    <string name="referral_code">Your referral code</string>
-    <string name="referral_button_add_friend">Add Friends</string>
-    <string name="referral_button_share_link">Share Referral Link</string>
-    <string name="referral_next_reward">Next Reward:</string>
-    <string name="referral_next_unlock">New Reward to unlock:</string>
-    <string name="referral_referee_count">Your referred</string>
-    <string name="referral_referee_signup_date">Signed up on %1$s</string>
-    <string name="referral_share_link_message">This app helped me reduced by half my screen time. Use my referral code "%1$s" to get a free month of Opal Pro!</string>
-
-    <plurals name="reward_threshold_count">
+    <string name="home_referral_subtitle">Give a friend unlimited access to Opal Pro, including unlimited schedules, app limits, deep focus, allow lists and more!</string>
+    <string name="home_referral_code">Your referral code</string>
+    <string name="home_referral_button_add_friend">Add Friends</string>
+    <string name="home_referral_button_share_link">Share Referral Link</string>
+    <string name="home_referral_next_reward">Next Reward:</string>
+    <string name="home_referral_next_unlock">New Reward to unlock:</string>
+    <string name="home_referral_referred_users_count">Your referred</string>
+    <string name="home_referral_referred_user_signup_date">Signed up on %1$s</string>
+    <string name="home_referral_share_link_message">This app helped me reduced by half my screen time. Use my referral code "%1$s" to get a free month of Opal Pro!</string>
+    <plurals name="home_reward_threshold_count">
         <item quantity="one">%d friend</item>
         <item quantity="other">%d friends</item>
     </plurals>
+    <string name="home_reward_button_claimed">Claimed</string>
+    <string name="home_reward_button_claim">Claim</string>
     <string name="reward_1_title">Loyal Gem</string>
     <string name="reward_1_subtitle">Unlock this special MileStone</string>
     <string name="reward_2_title">Reputation Gem</string>
@@ -28,9 +29,9 @@
     <string name="reward_5_subtitle">Contact us to get a Lifetime of Opal Pro</string>
     <string name="reward_6_title">Life-changing Gear</string>
     <string name="reward_6_subtitle">Contact us for free specially designed Opal gear</string>
-    <string name="reward_button_claimed">Claimed</string>
-    <string name="reward_button_claim">Claim</string>
-
-    <string name="settings_bottom_sheet_title">Simulate referred users count</string>
-    <string name="settings_bottom_sheet_button">Apply (1s delay)</string>
+    <string name="home_settings_simulate_referral">Simulate referrals…</string>
+    <string name="home_settings_pick_gem">Pick Gem</string>
+    <string name="home_settings_clear">Clear</string>
+    <string name="home_settings_bottom_sheet_title">Simulate referred users count</string>
+    <string name="home_settings_bottom_sheet_button">Apply (1s delay)</string>
 </resources>

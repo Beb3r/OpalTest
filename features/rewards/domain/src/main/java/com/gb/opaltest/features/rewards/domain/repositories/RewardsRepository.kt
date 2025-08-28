@@ -17,4 +17,8 @@ class RewardsRepository(
     suspend fun setClaimedRewardId(id: String) {
         dataSource.setClaimedRewardId(id = id)
     }
+
+    suspend fun clearClaimedRewards() {
+        dataSource.clearClaimedRewards()
+    }
 }

@@ -130,7 +130,7 @@ fun HomeSummary(
                                         currentReward.onClick(currentReward.id)
                                     }
                                     .padding(horizontal = 24.dp, vertical = 6.dp),
-                                text = stringResource(translations.reward_button_claim),
+                                text = stringResource(translations.home_reward_button_claim),
                                 textWeight = TextWeight.BOLD,
                                 textSize = TextSize.MEDIUM,
                                 textColor = Colors.Black,
@@ -193,7 +193,7 @@ fun HomeSummary(
             ) {
                 Body(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(translations.referral_referee_count),
+                    text = stringResource(translations.home_referral_referred_users_count),
                     textWeight = TextWeight.SEMI_BOLD,
                     textSize = TextSize.LARGE,
                     textColor = Colors.White,

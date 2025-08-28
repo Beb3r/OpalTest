@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -65,7 +64,7 @@ fun HomeSettingsBottomSheet(
                 ) {
                     Body(
                         modifier = Modifier.weight(1f),
-                        text = stringResource(translations.settings_bottom_sheet_title),
+                        text = stringResource(translations.home_settings_bottom_sheet_title),
                         textColor = Colors.White,
                         textWeight = TextWeight.BOLD,
                         textSize = TextSize.LARGE,
@@ -113,7 +112,7 @@ fun HomeSettingsBottomSheet(
                     ),
                     content = {
                         Body(
-                            text = stringResource(translations.settings_bottom_sheet_button),
+                            text = stringResource(translations.home_settings_bottom_sheet_button),
                             textAlign = TextAlign.Center,
                             textWeight = TextWeight.SEMI_BOLD,
                             textSize = TextSize.LARGE,

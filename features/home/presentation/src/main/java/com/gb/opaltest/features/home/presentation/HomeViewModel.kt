@@ -10,7 +10,9 @@ import com.gb.opaltest.features.home.domain.use_cases.ObserveHomeDataUseCase
 import com.gb.opaltest.features.home.presentation.mappers.toHomeRewardUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeEventsUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeViewStateUiModel
+import com.gb.opaltest.features.referral.domain.use_cases.ClearReferredUsersUseCase
 import com.gb.opaltest.features.referral.domain.use_cases.SetReferredUsersUseCase
+import com.gb.opaltest.features.rewards.domain.use_cases.ClearClaimedRewardsUseCase
 import com.gb.opaltest.features.rewards.domain.use_cases.SetClaimedRewardIdUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -28,6 +30,8 @@ class HomeViewModel(
     private val appCoroutineDispatchers: AppCoroutineDispatchers,
     private val setReferredUseCase: SetReferredUsersUseCase,
     private val setClaimedRewardIdUseCase: SetClaimedRewardIdUseCase,
+    private val clearClaimedRewardsUseCase: ClearClaimedRewardsUseCase,
+    private val clearReferredUsersUseCase: ClearReferredUsersUseCase,
 ) : ViewModel() {
 
     private val shouldShowSettingsBottomSheetFlow = MutableStateFlow(false)
@@ -41,22 +45,37 @@ class HomeViewModel(
         shouldShowSettingsBottomSheetFlow,
     ).mapLatest { (homeData, shouldShowSettingsBottomSheet) ->
         homeData.toHomeRewardUiModel(
-            onSettingsClicked = ::onSettingsClicked,
             onClaimedRewardClicked = ::onClaimRewardClicked,
             shouldShowSettingsBottomSheet = shouldShowSettingsBottomSheet,
             onSettingsBottomSheetClosed = ::onSettingsBottomSheetClosed,
             onSettingsBottomSheetButtonClicked = ::onSettingsBottomSheetButtonClicked,
             onAddFriendButtonClicked = ::onAddFriendButtonClicked,
             onShareLinkButtonClicked = ::onShareLinkButtonClicked,
+            onSettingsSimulateReferralsClicked = ::onSettingsSimulateReferralsClicked,
+            onSettingsPickGemClicked = ::onSettingsPickGemClicked,
+            onSettingsClearClicked = ::onSettingsClearClicked,
         )
     }.stateIn(
         scope = viewModelScope,
         initialValue = HomeViewStateUiModel.DEFAULT,
     )
 
-    private fun onSettingsClicked() {
+    private fun onSettingsSimulateReferralsClicked() {
         viewModelScope.launch {
             shouldShowSettingsBottomSheetFlow.value = true
+        }
+    }
+
+    private fun onSettingsPickGemClicked() {
+        viewModelScope.launch {
+            shouldShowSettingsBottomSheetFlow.value = true
+        }
+    }
+
+    private fun onSettingsClearClicked() {
+        viewModelScope.launch(appCoroutineDispatchers.io) {
+            clearClaimedRewardsUseCase()
+            clearReferredUsersUseCase()
         }
     }
 
@@ -82,7 +101,7 @@ class HomeViewModel(
 
     private fun onAddFriendButtonClicked(referralCode: String) {
         val message = TextUiModel.StringRes(
-            resId = translations.referral_share_link_message,
+            resId = translations.home_referral_share_link_message,
             formatArgs = arrayOf(referralCode)
         )
         viewModelScope.launch {
@@ -92,7 +111,7 @@ class HomeViewModel(
 
     private fun onShareLinkButtonClicked(referralCode: String) {
         val message = TextUiModel.StringRes(
-            resId = translations.referral_share_link_message,
+            resId = translations.home_referral_share_link_message,
             formatArgs = arrayOf(referralCode)
         )
         viewModelScope.launch {

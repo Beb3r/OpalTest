@@ -68,4 +68,10 @@ class RewardsLocalDataSourceImpl(
             preferences[KEY_CLAIMED_REWARD_ID] = ids + id
         }
     }
+
+    override suspend fun clearClaimedRewards() {
+        dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
 }
