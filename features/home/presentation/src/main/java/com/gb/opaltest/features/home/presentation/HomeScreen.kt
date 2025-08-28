@@ -8,12 +8,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -21,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gb.opaltest.core.common.LazyColumnScrollObserver
 import com.gb.opaltest.core.design.Body
 import com.gb.opaltest.core.design.Colors
 import com.gb.opaltest.core.design.TextSize
@@ -41,7 +48,8 @@ import com.gb.opaltest.core.translations.R.string as translations
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = koinViewModel()
+    viewModel: HomeViewModel = koinViewModel(),
+    onScrolled: (Float) -> Unit,
 ) {
 
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
@@ -52,6 +60,7 @@ fun HomeScreen(
         rewards = viewState.rewards,
         onSettingsClicked = viewState.onSettingsClicked,
         settingsBottomSheetViewState = viewState.settingsBottomSheetViewState,
+        onScrolled = onScrolled,
     )
 }
 
@@ -64,13 +73,23 @@ fun HomeScreenContent(
     rewards: PersistentList<HomeRewardUiModel>,
     onSettingsClicked: () -> Unit,
     settingsBottomSheetViewState: HomeSettingsBottomSheetViewState,
+    onScrolled: (Float) -> Unit,
 ) {
     val density = LocalDensity.current
+
+    val listState = rememberLazyListState()
+    LazyColumnScrollObserver(
+        listState = listState,
+        onScrollOffsetChanged = { offset ->
+            onScrolled(offset.toFloat())
+        }
+    )
 
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
+        state = listState,
     ) {
         item {
             Box(

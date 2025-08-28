@@ -20,6 +20,7 @@ import com.gb.opaltest.core.design.image.BlurTransformation
 @Composable
 fun BoxScope.AmbientBackground(
     modifier: Modifier = Modifier,
+    offset: Float,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
@@ -33,7 +34,7 @@ fun BoxScope.AmbientBackground(
                 scaleY = 1.5f
                 scaleX = 1.3f
                 with(density) {
-                    translationY = (-32).dp.toPx()
+                    translationY = (-32).dp.toPx() + (-offset)
                 }
             },
         model = ImageRequest.Builder(context)

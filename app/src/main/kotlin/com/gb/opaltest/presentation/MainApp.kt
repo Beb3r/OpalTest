@@ -12,6 +12,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -23,11 +24,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.palette.graphics.Palette
-import com.gb.opaltest.core.design.components.AmbientBackground
 import com.gb.opaltest.core.design.AppThemeData
 import com.gb.opaltest.core.design.Colors
 import com.gb.opaltest.core.design.LocalAppThemeData
 import com.gb.opaltest.core.design.OpalTestTheme
+import com.gb.opaltest.core.design.components.AmbientBackground
 import com.gb.opaltest.core.navigation.api.NavControllerAccessor
 import com.gb.opaltest.features.gems.domain.models.GemDomainModel.Companion.GEM_ID_B1
 import com.gb.opaltest.features.gems.presentation.models.GemUiModel
@@ -67,6 +68,9 @@ fun MainApp(
                     .background(color = Colors.Black)
             ) {
                 val navController = rememberNavController()
+                var ambienBackgroundOffset by remember {
+                    mutableFloatStateOf(0f)
+                }
 
                 DisposableEffect(navController) {
                     navControllerAccessor.setController(navController)
@@ -87,9 +91,17 @@ fun MainApp(
                         SplashScreen()
                     }
                     composable<HomeScreenRoute> {
-                        AmbientBackground {
-                            HomeScreen()
-                        }
+                        AmbientBackground(
+                            offset = ambienBackgroundOffset,
+                            content = {
+                                HomeScreen(
+                                    onScrolled = {
+                                        Timber.d("TEEST $it")
+                                        ambienBackgroundOffset = it
+                                    }
+                                )
+                            }
+                        )
                     }
                 }
             }
