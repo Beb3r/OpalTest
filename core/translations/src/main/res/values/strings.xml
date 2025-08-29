@@ -32,6 +32,8 @@
     <string name="home_settings_simulate_referral">Simulate referrals…</string>
     <string name="home_settings_pick_gem">Pick Gem</string>
     <string name="home_settings_clear">Clear</string>
-    <string name="home_settings_bottom_sheet_title">Simulate referred users count</string>
-    <string name="home_settings_bottom_sheet_button">Apply (1s delay)</string>
+    <string name="home_simulate_referrals_bottom_sheet_title">Simulate referred users count</string>
+    <string name="home_simulate_referrals_bottom_sheet_button">Apply (1s delay)</string>
+    <string name="home_pick_gem_bottom_sheet_title">Pick current gem</string>
+    <string name="home_pick_gem_bottom_sheet_button">Apply</string>
 </resources>

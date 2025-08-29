@@ -87,4 +87,10 @@ class GemsLocalDataSourceImpl(
             preferences[KEY_CURRENT_GEM_ID] = id
         }
     }
+
+    override suspend fun clearCurrentGem() {
+        dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
 }

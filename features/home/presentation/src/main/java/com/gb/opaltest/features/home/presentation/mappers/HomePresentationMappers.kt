@@ -4,13 +4,16 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.gb.opaltest.core.translations.R.plurals
 import com.gb.opaltest.core.translations.TextUiModel
+import com.gb.opaltest.features.gems.domain.models.GemDomainModel
+import com.gb.opaltest.features.gems.presentation.mappers.toGemUiModel
 import com.gb.opaltest.features.home.domain.models.HomeDataDomainModel
 import com.gb.opaltest.features.home.domain.models.HomeRewardDomainModel
 import com.gb.opaltest.features.home.presentation.models.HomeCurrentRewardUiModel
+import com.gb.opaltest.features.home.presentation.models.HomePickGemBottomSheetViewState
 import com.gb.opaltest.features.home.presentation.models.HomeReferredUserUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeRewardFooterUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeRewardUiModel
-import com.gb.opaltest.features.home.presentation.models.HomeSettingsBottomSheetViewState
+import com.gb.opaltest.features.home.presentation.models.HomeSimulateReferralsBottomSheetViewState
 import com.gb.opaltest.features.home.presentation.models.HomeViewStateUiModel
 import com.gb.opaltest.features.referral.domain.models.ReferredUserDomainModel
 import com.gb.opaltest.features.rewards.domain.models.RewardDomainModel.Companion.REWARD_ID_1
@@ -20,51 +23,60 @@ import com.gb.opaltest.features.rewards.domain.models.RewardDomainModel.Companio
 import com.gb.opaltest.features.rewards.domain.models.RewardDomainModel.Companion.REWARD_ID_5
 import kotlinx.collections.immutable.toPersistentList
 import java.text.DateFormat
-import java.util.Locale
 import com.gb.opaltest.core.design.R.drawable as drawables
 import com.gb.opaltest.core.translations.R.string as translations
 
 fun HomeDataDomainModel.toHomeRewardUiModel(
+    gems: List<GemDomainModel>,
+    currentGem: GemDomainModel,
     onSettingsSimulateReferralsClicked: () -> Unit,
     onClaimedRewardClicked: (String) -> Unit,
-    shouldShowSettingsBottomSheet: Boolean,
-    onSettingsBottomSheetClosed: () -> Unit,
-    onSettingsBottomSheetButtonClicked: (Int) -> Unit,
+    shouldShowSimulateReferralsBottomSheet: Boolean,
+    onSimulateReferralsBottomSheetClosed: () -> Unit,
+    onSimulateReferralsBottomSheetButtonClicked: (Int) -> Unit,
+    shouldShowPickGemBottomSheet: Boolean,
+    onPickGemBottomSheetClosed: () -> Unit,
+    onPickGemBottomSheetButtonClicked: (String) -> Unit,
     onAddFriendButtonClicked: (String) -> Unit,
     onShareLinkButtonClicked: (String) -> Unit,
     onSettingsPickGemClicked: () -> Unit,
     onSettingsClearClicked: () -> Unit,
+    dateFormat: DateFormat,
 ): HomeViewStateUiModel {
-    val settingsBottomSheetViewState = getSettingsBottomSheetViewState(
-        shouldShowSettingsBottomSheet = shouldShowSettingsBottomSheet,
-        referredUsersCount = this.referredUsers.size,
-        onClosed = onSettingsBottomSheetClosed,
-        onButtonClicked = onSettingsBottomSheetButtonClicked,
-    )
     val currentReward = getCurrentReward(
         rewards = this.rewards,
         onClaimedRewardClicked = onClaimedRewardClicked,
     )
 
-    val dateFormatter: DateFormat =
-        DateFormat.getDateInstance(
-            DateFormat.SHORT,
-            Locale.getDefault(),
-        )
+    val simulateReferralsBottomSheetViewState = getSimulateReferralsBottomSheetViewState(
+        shouldShowSettingsBottomSheet = shouldShowSimulateReferralsBottomSheet,
+        referredUsersCount = this.referredUsers.size,
+        onClosed = onSimulateReferralsBottomSheetClosed,
+        onButtonClicked = onSimulateReferralsBottomSheetButtonClicked,
+    )
+
+    val pickGemBottomSheetViewState = getPickGemBottomSheetViewState(
+        shouldShowPickGemBottomSheet = shouldShowPickGemBottomSheet,
+        gems = gems,
+        selectedGemId = currentGem.id,
+        onClosed = onPickGemBottomSheetClosed,
+        onButtonClicked = onPickGemBottomSheetButtonClicked,
+    )
 
     return HomeViewStateUiModel(
         referralCode = "X3FRR",
         onAddFriendButtonClicked = onAddFriendButtonClicked,
         onShareLinkButtonClicked = onShareLinkButtonClicked,
         currentReward = currentReward,
-        referredUsers = this.referredUsers.map { it.toUiModel(dateFormatter) }.toPersistentList(),
+        referredUsers = this.referredUsers.map { it.toUiModel(dateFormat) }.toPersistentList(),
         rewards = this.rewards.map {
             it.toHomeRewardUiModel(onClaimedRewardClicked = onClaimedRewardClicked)
         }.toPersistentList(),
         onSettingsSimulateReferralsClicked = onSettingsSimulateReferralsClicked,
         onSettingsPickGemClicked = onSettingsPickGemClicked,
         onSettingsClearClicked = onSettingsClearClicked,
-        settingsBottomSheetViewState = settingsBottomSheetViewState,
+        simulateReferralsBottomSheetViewState = simulateReferralsBottomSheetViewState,
+        pickGemBottomSheetViewState = pickGemBottomSheetViewState
     )
 }
 
@@ -103,8 +115,8 @@ private fun getCurrentReward(
     }
 }
 
-private fun ReferredUserDomainModel.toUiModel(dataFormat: DateFormat): HomeReferredUserUiModel {
-    val formatedDate = dataFormat.format(this.date)
+private fun ReferredUserDomainModel.toUiModel(dateFormat: DateFormat): HomeReferredUserUiModel {
+    val formatedDate = dateFormat.format(this.date)
     return HomeReferredUserUiModel(
         id = this.id,
         name = this.name,
@@ -171,19 +183,38 @@ private fun getGemTitle(id: String): Int =
         else -> translations.reward_6_title
     }
 
-fun getSettingsBottomSheetViewState(
+private fun getSimulateReferralsBottomSheetViewState(
     shouldShowSettingsBottomSheet: Boolean,
     referredUsersCount: Int,
     onClosed: () -> Unit,
     onButtonClicked: (Int) -> Unit
-): HomeSettingsBottomSheetViewState {
+): HomeSimulateReferralsBottomSheetViewState {
     return if (shouldShowSettingsBottomSheet) {
-        HomeSettingsBottomSheetViewState.Visible(
+        HomeSimulateReferralsBottomSheetViewState.Visible(
             referredUsersCount = referredUsersCount,
             onClosed = onClosed,
             onButtonClicked = onButtonClicked,
         )
     } else {
-        HomeSettingsBottomSheetViewState.Hidden
+        HomeSimulateReferralsBottomSheetViewState.Hidden
+    }
+}
+
+private fun getPickGemBottomSheetViewState(
+    shouldShowPickGemBottomSheet: Boolean,
+    gems: List<GemDomainModel>,
+    selectedGemId: String,
+    onClosed: () -> Unit,
+    onButtonClicked: (String) -> Unit
+): HomePickGemBottomSheetViewState {
+    return if (shouldShowPickGemBottomSheet) {
+        HomePickGemBottomSheetViewState.Visible(
+            gems = gems.map { it.toGemUiModel() }.toPersistentList(),
+            selectedGemId = selectedGemId,
+            onClosed = onClosed,
+            onButtonClicked = onButtonClicked,
+        )
+    } else {
+        HomePickGemBottomSheetViewState.Hidden
     }
 }

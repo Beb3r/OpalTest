@@ -1,9 +1,12 @@
 package com.gb.opaltest.features.home.presentation.models
 
+import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
 import com.gb.opaltest.core.translations.TextUiModel
+import com.gb.opaltest.features.gems.presentation.models.GemUiModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import java.nio.channels.Selector
 
 @Immutable
 data class HomeViewStateUiModel(
@@ -16,7 +19,8 @@ data class HomeViewStateUiModel(
     val onSettingsSimulateReferralsClicked: () -> Unit,
     val onSettingsPickGemClicked: () -> Unit,
     val onSettingsClearClicked: () -> Unit,
-    val settingsBottomSheetViewState: HomeSettingsBottomSheetViewState,
+    val simulateReferralsBottomSheetViewState: HomeSimulateReferralsBottomSheetViewState,
+    val pickGemBottomSheetViewState: HomePickGemBottomSheetViewState,
 ) {
     companion object {
         val DEFAULT = HomeViewStateUiModel(
@@ -29,7 +33,8 @@ data class HomeViewStateUiModel(
             onSettingsSimulateReferralsClicked = { },
             onSettingsPickGemClicked = { },
             onSettingsClearClicked = { },
-            settingsBottomSheetViewState = HomeSettingsBottomSheetViewState.Hidden,
+            simulateReferralsBottomSheetViewState = HomeSimulateReferralsBottomSheetViewState.Hidden,
+            pickGemBottomSheetViewState = HomePickGemBottomSheetViewState.Hidden,
         )
     }
 }
@@ -83,13 +88,24 @@ sealed interface HomeRewardFooterUiModel {
 }
 
 @Immutable
-sealed interface HomeSettingsBottomSheetViewState {
-    data object Hidden : HomeSettingsBottomSheetViewState
+sealed interface HomeSimulateReferralsBottomSheetViewState {
+    data object Hidden : HomeSimulateReferralsBottomSheetViewState
     data class Visible(
         val referredUsersCount: Int,
         val onClosed: () -> Unit,
         val onButtonClicked: (Int) -> Unit
-    ) : HomeSettingsBottomSheetViewState
+    ) : HomeSimulateReferralsBottomSheetViewState
+}
+
+@Immutable
+sealed interface HomePickGemBottomSheetViewState {
+    data object Hidden : HomePickGemBottomSheetViewState
+    data class Visible(
+        val gems: PersistentList<GemUiModel>,
+        val selectedGemId: String,
+        val onClosed: () -> Unit,
+        val onButtonClicked: (String) -> Unit
+    ) : HomePickGemBottomSheetViewState
 }
 
 @Immutable

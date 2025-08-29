@@ -3,6 +3,7 @@ package com.gb.opaltest.features.home.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,34 +29,35 @@ import com.gb.opaltest.core.design.TextSize
 import com.gb.opaltest.core.design.TextWeight
 import com.gb.opaltest.core.design.Title
 import com.gb.opaltest.core.design.components.AppBottomSheet
-import com.gb.opaltest.features.home.presentation.models.HomeSettingsBottomSheetViewState
+import com.gb.opaltest.features.home.presentation.models.HomeSimulateReferralsBottomSheetViewState
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import com.gb.opaltest.core.design.R.drawable as drawables
 import com.gb.opaltest.core.translations.R.string as translations
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeSettingsBottomSheet(
-    viewState: HomeSettingsBottomSheetViewState,
+fun HomeSimulateReferralsBottomSheet(
+    viewState: HomeSimulateReferralsBottomSheetViewState,
 ) {
-
+    Timber.d("TEEST viewState: $viewState")
     val scope = rememberCoroutineScope()
 
     val state = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
 
-    if (viewState is HomeSettingsBottomSheetViewState.Visible) {
+    if (viewState is HomeSimulateReferralsBottomSheetViewState.Visible) {
+        val sliderState =
+            rememberSliderState(
+                value = viewState.referredUsersCount.toFloat(),
+                valueRange = 0f..100f,
+            )
+
         AppBottomSheet(
             state = state,
             onBottomSheetClosed = viewState.onClosed,
             content = {
-                val sliderState =
-                    rememberSliderState(
-                        value = viewState.referredUsersCount.toFloat(),
-                        valueRange = 0f..100f,
-                    )
-
                 Row(
                     modifier = Modifier
                         .padding(start = 24.dp, top = 8.dp, end = 8.dp)
@@ -64,7 +66,7 @@ fun HomeSettingsBottomSheet(
                 ) {
                     Body(
                         modifier = Modifier.weight(1f),
-                        text = stringResource(translations.home_settings_bottom_sheet_title),
+                        text = stringResource(translations.home_simulate_referrals_bottom_sheet_title),
                         textColor = Colors.White,
                         textWeight = TextWeight.BOLD,
                         textSize = TextSize.LARGE,
@@ -103,7 +105,8 @@ fun HomeSettingsBottomSheet(
 
                 Button(
                     modifier = Modifier
-                        .safeContentPadding()
+                        .navigationBarsPadding()
+                        .padding(horizontal = 32.dp)
                         .fillMaxWidth()
                         .background(color = Colors.White, shape = RoundedCornerShape(30.dp)),
                     shape = RoundedCornerShape(30.dp),
@@ -112,7 +115,7 @@ fun HomeSettingsBottomSheet(
                     ),
                     content = {
                         Body(
-                            text = stringResource(translations.home_settings_bottom_sheet_button),
+                            text = stringResource(translations.home_simulate_referrals_bottom_sheet_button),
                             textAlign = TextAlign.Center,
                             textWeight = TextWeight.SEMI_BOLD,
                             textSize = TextSize.LARGE,

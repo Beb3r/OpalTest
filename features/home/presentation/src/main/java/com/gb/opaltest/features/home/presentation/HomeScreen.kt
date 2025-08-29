@@ -45,10 +45,11 @@ import com.gb.opaltest.core.design.Title
 import com.gb.opaltest.core.design.components.PrimaryButton
 import com.gb.opaltest.core.design.components.SecondaryButton
 import com.gb.opaltest.core.translations.toValue
+import com.gb.opaltest.features.home.presentation.components.HomePickGemBottomSheet
 import com.gb.opaltest.features.home.presentation.components.HomeReferralCard
 import com.gb.opaltest.features.home.presentation.components.HomeReferralCode
 import com.gb.opaltest.features.home.presentation.components.HomeReward
-import com.gb.opaltest.features.home.presentation.components.HomeSettingsBottomSheet
+import com.gb.opaltest.features.home.presentation.components.HomeSimulateReferralsBottomSheet
 import com.gb.opaltest.features.home.presentation.components.HomeSummary
 import com.gb.opaltest.features.home.presentation.models.HomeEventsUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeViewStateUiModel
@@ -136,6 +137,7 @@ fun HomeScreenContent(
                     DropdownMenu(
                         modifier = Modifier.align(alignment = Alignment.CenterEnd),
                         expanded = isMenuExpanded,
+                        containerColor = Colors.DarkGrey,
                         onDismissRequest = { isMenuExpanded = false },
                     ) {
                         DropdownMenuItem(
@@ -286,7 +288,11 @@ fun HomeScreenContent(
         }
     }
 
-    HomeSettingsBottomSheet(
-        viewState = viewState.settingsBottomSheetViewState,
+    HomeSimulateReferralsBottomSheet(
+        viewState = viewState.simulateReferralsBottomSheetViewState,
+    )
+
+    HomePickGemBottomSheet(
+        viewState = viewState.pickGemBottomSheetViewState,
     )
 }

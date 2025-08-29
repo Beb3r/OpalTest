@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
+import coil3.request.crossfade
 import coil3.request.transformations
 import com.gb.opaltest.core.design.LocalAppThemeData
 import com.gb.opaltest.core.design.image.BlurTransformation
@@ -50,6 +51,7 @@ fun BoxScope.AmbientBackground(
                         )
                     )
                 )
+                crossfade(true)
             }.build(),
         contentDescription = "ambient background",
         contentScale = ContentScale.Crop,

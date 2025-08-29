@@ -14,6 +14,8 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.design)
     implementation(projects.core.translations)
+    implementation(projects.features.gems.domain)
+    implementation(projects.features.gems.presentation)
     implementation(projects.features.home.domain)
     implementation(projects.features.referral.domain)
     implementation(projects.features.rewards.domain)

@@ -6,6 +6,10 @@ import com.gb.opaltest.core.common.combines
 import com.gb.opaltest.core.common.dispatchers.AppCoroutineDispatchers
 import com.gb.opaltest.core.common.stateIn
 import com.gb.opaltest.core.translations.TextUiModel
+import com.gb.opaltest.features.gems.domain.use_cases.ClearCurrentGemUseCase
+import com.gb.opaltest.features.gems.domain.use_cases.ObserveCurrentGemUseCase
+import com.gb.opaltest.features.gems.domain.use_cases.ObserveGemsUseCase
+import com.gb.opaltest.features.gems.domain.use_cases.SetCurrentGemUseCase
 import com.gb.opaltest.features.home.domain.use_cases.ObserveHomeDataUseCase
 import com.gb.opaltest.features.home.presentation.mappers.toHomeRewardUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeEventsUiModel
@@ -22,38 +26,61 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import java.text.DateFormat
+import java.util.Locale
 import com.gb.opaltest.core.translations.R.string as translations
 
 @KoinViewModel
 class HomeViewModel(
     observeHomeDataUseCase: ObserveHomeDataUseCase,
+    observeGemsUseCase: ObserveGemsUseCase,
+    observeCurrentGemUseCase: ObserveCurrentGemUseCase,
     private val appCoroutineDispatchers: AppCoroutineDispatchers,
     private val setReferredUseCase: SetReferredUsersUseCase,
     private val setClaimedRewardIdUseCase: SetClaimedRewardIdUseCase,
     private val clearClaimedRewardsUseCase: ClearClaimedRewardsUseCase,
     private val clearReferredUsersUseCase: ClearReferredUsersUseCase,
+    private val setCurrentGemUseCase: SetCurrentGemUseCase,
+    private val clearCurrentGemUseCase: ClearCurrentGemUseCase,
 ) : ViewModel() {
 
-    private val shouldShowSettingsBottomSheetFlow = MutableStateFlow(false)
+    private val shouldShowSimulateReferralsBottomSheetFlow = MutableStateFlow(false)
+    private val shouldShowPickGemBottomSheetFlow = MutableStateFlow(false)
 
     private val _eventsFlow = MutableSharedFlow<HomeEventsUiModel>()
     val eventsFlow = _eventsFlow.asSharedFlow()
 
+    private val dateFormat by lazy {
+            DateFormat.getDateInstance(
+                DateFormat.SHORT,
+                Locale.getDefault(),
+            )
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val viewState = combines(
         observeHomeDataUseCase(),
-        shouldShowSettingsBottomSheetFlow,
-    ).mapLatest { (homeData, shouldShowSettingsBottomSheet) ->
+        observeGemsUseCase(),
+        observeCurrentGemUseCase(),
+        shouldShowSimulateReferralsBottomSheetFlow,
+        shouldShowPickGemBottomSheetFlow,
+    ).mapLatest { (homeData, gems, currentGem, shouldShowSimulateReferralsBottomSheet, shouldShowPickGemBottomSheet) ->
         homeData.toHomeRewardUiModel(
+            gems = gems,
+            currentGem = currentGem,
             onClaimedRewardClicked = ::onClaimRewardClicked,
-            shouldShowSettingsBottomSheet = shouldShowSettingsBottomSheet,
-            onSettingsBottomSheetClosed = ::onSettingsBottomSheetClosed,
-            onSettingsBottomSheetButtonClicked = ::onSettingsBottomSheetButtonClicked,
+            shouldShowSimulateReferralsBottomSheet = shouldShowSimulateReferralsBottomSheet,
+            onSimulateReferralsBottomSheetClosed = ::onSimulateReferralsBottomSheetClosed,
+            onSimulateReferralsBottomSheetButtonClicked = ::onSimulateReferralsBottomSheetButtonClicked,
+            shouldShowPickGemBottomSheet = shouldShowPickGemBottomSheet,
+            onPickGemBottomSheetClosed = ::onPickGemBottomSheetClosed,
+            onPickGemBottomSheetButtonClicked = ::onPickGemBottomSheetButtonClicked,
             onAddFriendButtonClicked = ::onAddFriendButtonClicked,
             onShareLinkButtonClicked = ::onShareLinkButtonClicked,
             onSettingsSimulateReferralsClicked = ::onSettingsSimulateReferralsClicked,
             onSettingsPickGemClicked = ::onSettingsPickGemClicked,
             onSettingsClearClicked = ::onSettingsClearClicked,
+            dateFormat = dateFormat,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -62,13 +89,13 @@ class HomeViewModel(
 
     private fun onSettingsSimulateReferralsClicked() {
         viewModelScope.launch {
-            shouldShowSettingsBottomSheetFlow.value = true
+            shouldShowSimulateReferralsBottomSheetFlow.value = true
         }
     }
 
     private fun onSettingsPickGemClicked() {
         viewModelScope.launch {
-            shouldShowSettingsBottomSheetFlow.value = true
+            shouldShowPickGemBottomSheetFlow.value = true
         }
     }
 
@@ -76,20 +103,34 @@ class HomeViewModel(
         viewModelScope.launch(appCoroutineDispatchers.io) {
             clearClaimedRewardsUseCase()
             clearReferredUsersUseCase()
+            clearCurrentGemUseCase()
         }
     }
 
-    private fun onSettingsBottomSheetClosed() {
+    private fun onSimulateReferralsBottomSheetClosed() {
         viewModelScope.launch {
-            shouldShowSettingsBottomSheetFlow.value = false
+            shouldShowSimulateReferralsBottomSheetFlow.value = false
         }
     }
 
-    private fun onSettingsBottomSheetButtonClicked(referredUsersCount: Int) {
-        shouldShowSettingsBottomSheetFlow.value = false
+    private fun onSimulateReferralsBottomSheetButtonClicked(referredUsersCount: Int) {
+        shouldShowSimulateReferralsBottomSheetFlow.value = false
         viewModelScope.launch(appCoroutineDispatchers.io) {
             delay(1000)
             setReferredUseCase(count = referredUsersCount)
+        }
+    }
+
+    private fun onPickGemBottomSheetClosed() {
+        viewModelScope.launch {
+            shouldShowPickGemBottomSheetFlow.value = false
+        }
+    }
+
+    private fun onPickGemBottomSheetButtonClicked(id: String) {
+        shouldShowPickGemBottomSheetFlow.value = false
+        viewModelScope.launch(appCoroutineDispatchers.io) {
+            setCurrentGemUseCase(id = id)
         }
     }
 
@@ -100,16 +141,14 @@ class HomeViewModel(
     }
 
     private fun onAddFriendButtonClicked(referralCode: String) {
-        val message = TextUiModel.StringRes(
-            resId = translations.home_referral_share_link_message,
-            formatArgs = arrayOf(referralCode)
-        )
-        viewModelScope.launch {
-            _eventsFlow.emit(HomeEventsUiModel.ShareLink(message = message))
-        }
+        emitShareLinkEvent(referralCode = referralCode)
     }
 
     private fun onShareLinkButtonClicked(referralCode: String) {
+        emitShareLinkEvent(referralCode = referralCode)
+    }
+
+    private fun emitShareLinkEvent(referralCode: String) {
         val message = TextUiModel.StringRes(
             resId = translations.home_referral_share_link_message,
             formatArgs = arrayOf(referralCode)

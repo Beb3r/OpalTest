@@ -15,4 +15,8 @@ class GemsRepository(private val dataSource: GemsLocalDataSource) {
     suspend fun setCurrentGemId(id: String) {
         dataSource.setCurrentGemId(id = id)
     }
+
+    suspend fun clearCurrentGem() {
+        dataSource.clearCurrentGem()
+    }
 }
