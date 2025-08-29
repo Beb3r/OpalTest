@@ -1,7 +1,5 @@
 package com.gb.opaltest.presentation
 
-import android.content.Context
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
@@ -17,21 +15,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.palette.graphics.Palette
 import com.gb.opaltest.core.design.AppThemeData
 import com.gb.opaltest.core.design.Colors
 import com.gb.opaltest.core.design.LocalAppThemeData
 import com.gb.opaltest.core.design.OpalTestTheme
 import com.gb.opaltest.core.design.components.AmbientBackground
+import com.gb.opaltest.core.design.createAppThemeData
 import com.gb.opaltest.core.navigation.api.NavControllerAccessor
-import com.gb.opaltest.features.gems.domain.models.GemDomainModel.Companion.GEM_ID_B1
-import com.gb.opaltest.features.gems.presentation.models.GemUiModel
 import com.gb.opaltest.features.home.navigation.HomeScreenRoute
 import com.gb.opaltest.features.home.presentation.HomeScreen
 import com.gb.opaltest.features.splash_screen.navigation.SplashScreenRoute
@@ -54,7 +48,12 @@ fun MainApp(
 
     LaunchedEffect(viewModel) {
         viewModel.currentGemFlow.collect { currentGem ->
-            createAppThemeData(context = context, gem = currentGem)?.let {
+            createAppThemeData(
+                context = context,
+                gemDrawableResId = currentGem.drawableResId,
+                gemId = currentGem.id
+            )?.let {
+                Timber.d("TEEST mainapp appData:$it")
                 localAppThemeData = it
             }
         }
@@ -106,26 +105,4 @@ fun MainApp(
             }
         }
     }
-}
-
-private fun createAppThemeData(context: Context, gem: GemUiModel): AppThemeData? {
-    val drawableResId = gem.drawableResId
-    val bitmap = AppCompatResources.getDrawable(context, drawableResId)?.toBitmap()
-    if (bitmap == null) {
-        Timber.e("createAppThemeData: bitmap is null for drawableResId=$drawableResId")
-        return null
-    }
-    val palette = Palette.from(bitmap).generate()
-    val (mainColor, secondaryColor) = if (gem.id == GEM_ID_B1) {
-        // for first gem, using colors from screenshot test web page to match at best
-        Colors.LightGreen to Colors.LightBlue
-    } else {
-        (palette.vibrantSwatch?.let { Color(it.rgb) } ?: Colors.Black) to
-                (palette.lightVibrantSwatch?.let { Color(it.rgb) } ?: Colors.Black)
-    }
-    return AppThemeData(
-        ambientBackgroundGemDrawableResId = drawableResId,
-        mainColor = mainColor,
-        secondaryColor = secondaryColor,
-    )
 }

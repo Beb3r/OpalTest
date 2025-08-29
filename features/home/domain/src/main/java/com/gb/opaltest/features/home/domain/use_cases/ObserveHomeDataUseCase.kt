@@ -10,7 +10,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapLatest
 import org.koin.core.annotation.Factory
-import timber.log.Timber
 
 @Factory
 class ObserveHomeDataUseCase(
@@ -41,7 +40,9 @@ class ObserveHomeDataUseCase(
                                 if (claimedRewardIds.contains(reward.id)) {
                                     HomeRewardDomainModel.HomeRewardStateDomainModel.Claimed
                                 } else {
-                                    HomeRewardDomainModel.HomeRewardStateDomainModel.Unclaimed
+                                    HomeRewardDomainModel.HomeRewardStateDomainModel.Unclaimed(
+                                        benefits = reward.benefits
+                                    )
                                 }
 
                         }

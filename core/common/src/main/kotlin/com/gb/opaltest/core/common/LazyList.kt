@@ -13,10 +13,19 @@ fun LazyColumnScrollObserver(
     listState: LazyListState,
     onScrollOffsetChanged: (Int) -> Unit = {}
 ) {
-    val firstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
-    val scrollOffset by remember { derivedStateOf { (listState.firstVisibleItemScrollOffset / 2f).toInt()} }
-    var map: Map<Int, Int> by remember { mutableStateOf(emptyMap()) }
+    val firstVisibleItemIndex by remember {
+        derivedStateOf { listState.firstVisibleItemIndex }
+    }
+    val scrollOffset by remember {
+        derivedStateOf { (listState.firstVisibleItemScrollOffset / 2f).toInt() }
+    }
+    var map: Map<Int, Int> by remember {
+        mutableStateOf(emptyMap())
+    }
     map = map.toMutableMap().apply { put(firstVisibleItemIndex, scrollOffset) }
-    val totalOffset by remember { derivedStateOf { map.entries.sumOf { it.value } } }
+
+    val totalOffset by remember {
+        derivedStateOf { map.entries.sumOf { it.value } }
+    }
     onScrollOffsetChanged(totalOffset)
 }

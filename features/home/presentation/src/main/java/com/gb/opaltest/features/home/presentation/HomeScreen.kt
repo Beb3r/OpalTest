@@ -49,6 +49,7 @@ import com.gb.opaltest.features.home.presentation.components.HomePickGemBottomSh
 import com.gb.opaltest.features.home.presentation.components.HomeReferralCard
 import com.gb.opaltest.features.home.presentation.components.HomeReferralCode
 import com.gb.opaltest.features.home.presentation.components.HomeReward
+import com.gb.opaltest.features.home.presentation.components.HomeRewardBenefitsDialog
 import com.gb.opaltest.features.home.presentation.components.HomeSimulateReferralsBottomSheet
 import com.gb.opaltest.features.home.presentation.components.HomeSummary
 import com.gb.opaltest.features.home.presentation.models.HomeEventsUiModel
@@ -125,7 +126,9 @@ fun HomeScreenContent(
                     onExpandedChange = { }
                 ) {
                     IconButton(
-                        modifier = Modifier.align(alignment = Alignment.CenterEnd).menuAnchor(type = PrimaryNotEditable),
+                        modifier = Modifier
+                            .align(alignment = Alignment.CenterEnd)
+                            .menuAnchor(type = PrimaryNotEditable),
                         onClick = { isMenuExpanded = !isMenuExpanded }
                     ) {
                         Icon(
@@ -294,5 +297,9 @@ fun HomeScreenContent(
 
     HomePickGemBottomSheet(
         viewState = viewState.pickGemBottomSheetViewState,
+    )
+
+    HomeRewardBenefitsDialog(
+        viewState.rewardBenefitsDialogViewState
     )
 }

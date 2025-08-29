@@ -12,11 +12,11 @@ object DateSerializer : KSerializer<Date> {
 
     override fun deserialize(decoder: Decoder): Date {
         val dateString = decoder.decodeString()
-        return dateString.stringToDate(format = DATE_FORMAT_SERVER)
+        return dateString.stringToDate(format = DATE_FORMAT)
     }
 
     override fun serialize(encoder: Encoder, value: Date) {
-        val dateString = value.dateToString(format = DATE_FORMAT_SERVER)
+        val dateString = value.dateToString(format = DATE_FORMAT)
         encoder.encodeString(dateString)
     }
 }

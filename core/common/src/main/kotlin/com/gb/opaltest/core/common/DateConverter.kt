@@ -4,10 +4,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import kotlin.apply
 
-const val DATE_FORMAT_LOCAL = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-const val DATE_FORMAT_SERVER = "yyyy-MM-dd'T'HH:mm:ssXXX"
+const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssXXX"
 
 fun Date.dateToString(format: String): String {
     val dateFormatter = SimpleDateFormat(format, Locale.US).apply {

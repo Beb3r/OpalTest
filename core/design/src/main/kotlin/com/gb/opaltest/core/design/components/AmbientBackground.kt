@@ -21,7 +21,9 @@ import com.gb.opaltest.core.design.image.BlurTransformation
 @Composable
 fun BoxScope.AmbientBackground(
     modifier: Modifier = Modifier,
-    offset: Float,
+    offset: Float = 0f,
+    imageScaleX: Float = 1.3f,
+    imageScaleY: Float = 1.5f,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
@@ -32,8 +34,8 @@ fun BoxScope.AmbientBackground(
             .fillMaxWidth()
             .fillMaxHeight(fraction = 0.5f)
             .graphicsLayer {
-                scaleY = 1.5f
-                scaleX = 1.3f
+                scaleY = imageScaleY
+                scaleX = imageScaleX
                 with(density) {
                     translationY = (-32).dp.toPx() + (-offset)
                 }

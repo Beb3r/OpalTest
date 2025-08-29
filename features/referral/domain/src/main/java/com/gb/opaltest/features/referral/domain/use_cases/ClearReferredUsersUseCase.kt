@@ -7,6 +7,7 @@ import org.koin.core.annotation.Factory
 class ClearReferredUsersUseCase(
     private val repository: ReferralRepository
 ) {
+
     suspend operator fun invoke() {
         repository.clearReferredUsers()
     }

@@ -11,9 +11,10 @@ import org.koin.core.annotation.Factory
 class ObserveCurrentGemUseCase(
     private val repository: GemsRepository,
 ) {
-    operator fun invoke(): Flow<GemDomainModel> {
-        return repository.observeCurrentGem().map {
+
+    operator fun invoke(): Flow<GemDomainModel> =
+        repository.observeCurrentGem().map {
             it ?: GemDomainModel(id = GEM_ID_B1)
+
         }
-    }
 }

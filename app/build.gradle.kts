@@ -40,7 +40,6 @@ android {
 
 dependencies {
     implementation(libs.androidx.navigation)
-    implementation(libs.androidx.palette)
     implementation(libs.bundles.coil)
 
     testImplementation(libs.junit)

@@ -1,7 +1,7 @@
 package com.gb.opaltest.features.gems.presentation.mappers
 
+import androidx.annotation.DrawableRes
 import com.gb.opaltest.features.gems.domain.models.GemDomainModel
-import com.gb.opaltest.features.gems.domain.models.GemDomainModel.Companion.GEM_ID_B1
 import com.gb.opaltest.features.gems.domain.models.GemDomainModel.Companion.GEM_ID_C1
 import com.gb.opaltest.features.gems.domain.models.GemDomainModel.Companion.GEM_ID_D1
 import com.gb.opaltest.features.gems.domain.models.GemDomainModel.Companion.GEM_ID_E1
@@ -20,8 +20,16 @@ import com.gb.opaltest.features.gems.presentation.models.GemUiModel
 import com.gb.opaltest.core.design.R.drawable as drawables
 
 fun GemDomainModel.toGemUiModel(): GemUiModel {
-    val drawableResId = when (this.id) {
-        GEM_ID_B1 -> drawables.gem_b1
+    val drawableResId = getGemDrawable(this.id)
+    return GemUiModel(
+        id = this.id,
+        drawableResId = drawableResId,
+    )
+}
+
+@DrawableRes
+fun getGemDrawable(id: String): Int =
+    when (id) {
         GEM_ID_C1 -> drawables.gem_c1
         GEM_ID_D1 -> drawables.gem_d1
         GEM_ID_E1 -> drawables.gem_e1
@@ -36,11 +44,6 @@ fun GemDomainModel.toGemUiModel(): GemUiModel {
         GEM_ID_O1 -> drawables.gem_o1
         GEM_ID_P1 -> drawables.gem_p1
         GEM_ID_Q1 -> drawables.gem_q1
-        else -> drawables.gem_a1
+        else -> drawables.gem_b1
 
     }
-    return GemUiModel(
-        id = this.id,
-        drawableResId = drawableResId,
-    )
-}

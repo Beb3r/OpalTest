@@ -7,6 +7,7 @@ import org.koin.core.annotation.Factory
 class SetCurrentGemUseCase(
     private val repository: GemsRepository,
 ) {
+
     suspend operator fun invoke(id: String) {
         repository.setCurrentGemId(id)
     }

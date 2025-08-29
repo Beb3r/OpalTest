@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,8 +31,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.gb.opaltest.core.design.AppThemeData
 import com.gb.opaltest.core.design.Body
 import com.gb.opaltest.core.design.Colors
 import com.gb.opaltest.core.design.Label
@@ -39,7 +42,9 @@ import com.gb.opaltest.core.design.LocalAppThemeData
 import com.gb.opaltest.core.design.TextSize
 import com.gb.opaltest.core.design.TextWeight
 import com.gb.opaltest.core.design.components.AppLinearProgressIndicator
+import com.gb.opaltest.core.translations.TextUiModel
 import com.gb.opaltest.core.translations.toValue
+import com.gb.opaltest.features.home.presentation.models.HomeRewardBenefitsUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeRewardFooterUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeRewardUiModel
 import com.gb.opaltest.core.design.R.drawable as drawables
@@ -129,9 +134,9 @@ fun HomeReward(
                 )
                 HomeRewardFooter(
                     modifier = Modifier.padding(top = 8.dp),
-                    rewardId = reward.id,
                     footer = reward.footer,
-                    detailsContainerWidth = detailsContainerWidth
+                    detailsContainerWidth = detailsContainerWidth,
+                    appThemeData = localAppThemeData,
                 )
             }
         }
@@ -149,21 +154,20 @@ fun HomeReward(
 @Composable
 fun HomeRewardFooter(
     modifier: Modifier,
-    rewardId: String,
     footer: HomeRewardFooterUiModel,
     detailsContainerWidth: Dp,
+    appThemeData: AppThemeData,
 ) {
     when (footer) {
         is HomeRewardFooterUiModel.InProgress -> {
-            val localAppThemeData = LocalAppThemeData.current
             AppLinearProgressIndicator(
                 modifier = modifier,
                 width = detailsContainerWidth,
                 backgroundColor = Colors.MediumGrey,
                 foregroundColor = Brush.horizontalGradient(
                     listOf(
-                        localAppThemeData.mainColor,
-                        localAppThemeData.secondaryColor
+                        appThemeData.mainColor,
+                        appThemeData.secondaryColor
                     )
                 ),
                 progress = footer.progress,
@@ -176,7 +180,7 @@ fun HomeRewardFooter(
                     modifier = modifier
                         .background(Colors.White, shape = RoundedCornerShape(16.dp))
                         .clickable {
-                            footer.onClick(rewardId)
+                            footer.onClick(footer.benefits)
                         }
                         .padding(horizontal = 24.dp, vertical = 6.dp),
                     text = stringResource(translations.home_reward_button_claim),
@@ -211,5 +215,76 @@ fun HomeRewardFooter(
                 }
             }
         }
+    }
+}
+
+@PreviewScreenSizes
+@Composable
+fun HomeRewardInProgressPreview() {
+    CompositionLocalProvider(LocalAppThemeData provides AppThemeData(
+        mainColor = Colors.LightGreen,
+        secondaryColor = Colors.LightBlue,
+    )) {
+        HomeReward(
+            reward = HomeRewardUiModel(
+                id = "reward_id_1",
+                imageDrawableResId = drawables.gem_b1,
+                threshold = TextUiModel.Plain("20"),
+                title = TextUiModel.Plain("Loyal Gem"),
+                subtitle = TextUiModel.Plain("Unlock this special MileStone"),
+                footer = HomeRewardFooterUiModel.InProgress(
+                    progress = 0.5f
+                )
+            ),
+            isLast = { false },
+            bottomPadding = { 0.dp }
+        )
+    }
+}
+
+@PreviewScreenSizes
+@Composable
+fun HomeRewardUnClaimedPreview() {
+    CompositionLocalProvider(LocalAppThemeData provides AppThemeData(
+        mainColor = Colors.LightGreen,
+        secondaryColor = Colors.LightBlue,
+    )) {
+        HomeReward(
+            reward = HomeRewardUiModel(
+                id = "reward_id_1",
+                imageDrawableResId = drawables.gem_b1,
+                threshold = TextUiModel.Plain("20"),
+                title = TextUiModel.Plain("Loyal Gem"),
+                subtitle = TextUiModel.Plain("Unlock this special MileStone"),
+                footer = HomeRewardFooterUiModel.Unlocked.UnClaimed(
+                    benefits = HomeRewardBenefitsUiModel.Gift("reward_id_1"),
+                    onClick = { _ -> }
+                )
+            ),
+            isLast = { false },
+            bottomPadding = { 0.dp }
+        )
+    }
+}
+
+@PreviewScreenSizes
+@Composable
+fun HomeRewardClaimedPreview() {
+    CompositionLocalProvider(LocalAppThemeData provides AppThemeData(
+        mainColor = Colors.LightGreen,
+        secondaryColor = Colors.LightBlue,
+    )) {
+        HomeReward(
+            reward = HomeRewardUiModel(
+                id = "reward_id_1",
+                imageDrawableResId = drawables.gem_b1,
+                threshold = TextUiModel.Plain("20"),
+                title = TextUiModel.Plain("Loyal Gem"),
+                subtitle = TextUiModel.Plain("Unlock this special MileStone"),
+                footer = HomeRewardFooterUiModel.Unlocked.Claimed
+            ),
+            isLast = { false },
+            bottomPadding = { 0.dp }
+        )
     }
 }

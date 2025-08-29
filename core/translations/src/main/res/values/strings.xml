@@ -36,4 +36,15 @@
     <string name="home_simulate_referrals_bottom_sheet_button">Apply (1s delay)</string>
     <string name="home_pick_gem_bottom_sheet_title">Pick current gem</string>
     <string name="home_pick_gem_bottom_sheet_button">Apply</string>
+    <string name="home_rewards_benefit_dialog_gem_title">You unlocked this new Gem! Congratulations!</string>
+    <string name="home_rewards_benefit_dialog_gem_subtitle">Do you want to set it as your new Gem?</string>
+    <string name="home_rewards_benefit_dialog_gem_positive_button">Set</string>
+    <string name="home_rewards_benefit_dialog_gem_negative_button">Close</string>
+    <string name="home_rewards_benefit_dialog_subscription_2_years_title">Wow! You unlocked 2 years of Opal Pro! Congratulations!</string>
+    <string name="home_rewards_benefit_dialog_subscription_lifetime_title">Wow! You unlocked a Lifetime of Opal Pro! Congratulations!</string>
+    <string name="home_rewards_benefit_dialog_subscription_subtitle">Don’t wait any longer and contact us to activate it</string>
+    <string name="home_rewards_benefit_dialog_subscription_button">Got it</string>
+    <string name="home_rewards_benefit_dialog_gift_title">No way! You wont believe what gift we have for you! Congratulations!</string>
+    <string name="home_rewards_benefit_dialog_gift_subtitle">Stop everything you’re doing and contact us to find out</string>
+    <string name="home_rewards_benefit_dialog_gift_button">Got it</string>
 </resources>

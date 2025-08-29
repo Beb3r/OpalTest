@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.gb.opaltest.core.common.observeKey
 import com.gb.opaltest.features.rewards.domain.data_sources.RewardsLocalDataSource
+import com.gb.opaltest.features.rewards.domain.models.RewardBenefitsDomainModel
 import com.gb.opaltest.features.rewards.domain.models.RewardDomainModel
 import com.gb.opaltest.features.rewards.domain.models.RewardDomainModel.Companion.REWARD_ID_1
 import com.gb.opaltest.features.rewards.domain.models.RewardDomainModel.Companion.REWARD_ID_2
@@ -39,12 +40,36 @@ class RewardsLocalDataSourceImpl(
 
     private val rewards by lazy {
         listOf(
-            RewardDomainModel(id = REWARD_ID_1, threshold = 1),
-            RewardDomainModel(id = REWARD_ID_2, threshold = 3),
-            RewardDomainModel(id = REWARD_ID_3, threshold = 10),
-            RewardDomainModel(id = REWARD_ID_4, threshold = 20),
-            RewardDomainModel(id = REWARD_ID_5, threshold = 50),
-            RewardDomainModel(id = REWARD_ID_6, threshold = 100),
+            RewardDomainModel(
+                id = REWARD_ID_1,
+                threshold = 1,
+                benefits = RewardBenefitsDomainModel.Gem("l1")
+            ),
+            RewardDomainModel(
+                id = REWARD_ID_2,
+                threshold = 3,
+                benefits = RewardBenefitsDomainModel.Gem("h1")
+            ),
+            RewardDomainModel(
+                id = REWARD_ID_3,
+                threshold = 10,
+                benefits = RewardBenefitsDomainModel.Gem("q1")
+            ),
+            RewardDomainModel(
+                id = REWARD_ID_4,
+                threshold = 20,
+                benefits = RewardBenefitsDomainModel.FreeSubscription2years
+            ),
+            RewardDomainModel(
+                id = REWARD_ID_5,
+                threshold = 50,
+                benefits = RewardBenefitsDomainModel.FreeSubscriptionLifeTime
+            ),
+            RewardDomainModel(
+                id = REWARD_ID_6,
+                threshold = 100,
+                benefits = RewardBenefitsDomainModel.Gift
+            ),
 
             )
     }

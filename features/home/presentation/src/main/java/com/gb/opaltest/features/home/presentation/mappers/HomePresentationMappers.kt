@@ -5,17 +5,24 @@ import androidx.annotation.StringRes
 import com.gb.opaltest.core.translations.R.plurals
 import com.gb.opaltest.core.translations.TextUiModel
 import com.gb.opaltest.features.gems.domain.models.GemDomainModel
+import com.gb.opaltest.features.gems.presentation.mappers.getGemDrawable
 import com.gb.opaltest.features.gems.presentation.mappers.toGemUiModel
 import com.gb.opaltest.features.home.domain.models.HomeDataDomainModel
 import com.gb.opaltest.features.home.domain.models.HomeRewardDomainModel
+import com.gb.opaltest.features.home.domain.models.HomeRewardDomainModel.HomeRewardStateDomainModel
 import com.gb.opaltest.features.home.presentation.models.HomeCurrentRewardUiModel
 import com.gb.opaltest.features.home.presentation.models.HomePickGemBottomSheetViewState
 import com.gb.opaltest.features.home.presentation.models.HomeReferredUserUiModel
+import com.gb.opaltest.features.home.presentation.models.HomeRewardBenefitsDialogViewState
+import com.gb.opaltest.features.home.presentation.models.HomeRewardBenefitsDialogViewState.Hidden
+import com.gb.opaltest.features.home.presentation.models.HomeRewardBenefitsDialogViewState.Visible
+import com.gb.opaltest.features.home.presentation.models.HomeRewardBenefitsUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeRewardFooterUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeRewardUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeSimulateReferralsBottomSheetViewState
 import com.gb.opaltest.features.home.presentation.models.HomeViewStateUiModel
 import com.gb.opaltest.features.referral.domain.models.ReferredUserDomainModel
+import com.gb.opaltest.features.rewards.domain.models.RewardBenefitsDomainModel
 import com.gb.opaltest.features.rewards.domain.models.RewardDomainModel.Companion.REWARD_ID_1
 import com.gb.opaltest.features.rewards.domain.models.RewardDomainModel.Companion.REWARD_ID_2
 import com.gb.opaltest.features.rewards.domain.models.RewardDomainModel.Companion.REWARD_ID_3
@@ -30,7 +37,7 @@ fun HomeDataDomainModel.toHomeRewardUiModel(
     gems: List<GemDomainModel>,
     currentGem: GemDomainModel,
     onSettingsSimulateReferralsClicked: () -> Unit,
-    onClaimedRewardClicked: (String) -> Unit,
+    onClaimedRewardClicked: (HomeRewardBenefitsUiModel) -> Unit,
     shouldShowSimulateReferralsBottomSheet: Boolean,
     onSimulateReferralsBottomSheetClosed: () -> Unit,
     onSimulateReferralsBottomSheetButtonClicked: (Int) -> Unit,
@@ -42,6 +49,9 @@ fun HomeDataDomainModel.toHomeRewardUiModel(
     onSettingsPickGemClicked: () -> Unit,
     onSettingsClearClicked: () -> Unit,
     dateFormat: DateFormat,
+    rewardBenefitsData: HomeRewardBenefitsUiModel?,
+    onRewardBenefitsDialogClosed: (String) -> Unit,
+    onRewardBenefitsDialogGemButtonClicked: (String, String) -> Unit,
 ): HomeViewStateUiModel {
     val currentReward = getCurrentReward(
         rewards = this.rewards,
@@ -63,6 +73,12 @@ fun HomeDataDomainModel.toHomeRewardUiModel(
         onButtonClicked = onPickGemBottomSheetButtonClicked,
     )
 
+    val rewardBenefitsDialogViewState = getRewardBenefitsDialogViewState(
+        rewardBenefitsData = rewardBenefitsData,
+        onClosed = onRewardBenefitsDialogClosed,
+        onGemButtonClicked = onRewardBenefitsDialogGemButtonClicked,
+    )
+
     return HomeViewStateUiModel(
         referralCode = "X3FRR",
         onAddFriendButtonClicked = onAddFriendButtonClicked,
@@ -76,36 +92,37 @@ fun HomeDataDomainModel.toHomeRewardUiModel(
         onSettingsPickGemClicked = onSettingsPickGemClicked,
         onSettingsClearClicked = onSettingsClearClicked,
         simulateReferralsBottomSheetViewState = simulateReferralsBottomSheetViewState,
-        pickGemBottomSheetViewState = pickGemBottomSheetViewState
+        pickGemBottomSheetViewState = pickGemBottomSheetViewState,
+        rewardBenefitsDialogViewState = rewardBenefitsDialogViewState,
     )
 }
 
 private fun getCurrentReward(
     rewards: List<HomeRewardDomainModel>,
-    onClaimedRewardClicked: (String) -> Unit,
+    onClaimedRewardClicked: (HomeRewardBenefitsUiModel) -> Unit,
 ): HomeCurrentRewardUiModel {
     val rewardToClaim =
-        rewards.firstOrNull { it.state == HomeRewardDomainModel.HomeRewardStateDomainModel.Unclaimed }
+        rewards.firstOrNull { it.state is HomeRewardStateDomainModel.Unclaimed }
     val rewardInProgress =
-        rewards.firstOrNull { it.state is HomeRewardDomainModel.HomeRewardStateDomainModel.InProgress }
+        rewards.firstOrNull { it.state is HomeRewardStateDomainModel.InProgress }
     return when {
         rewardToClaim != null -> {
             HomeCurrentRewardUiModel.Visible.UnClaimed(
-                imageDrawableResId = getGemDrawable(rewardToClaim.id),
-                title = TextUiModel.StringRes(getGemTitle(rewardToClaim.id)),
+                imageDrawableResId = getRewardDrawable(rewardToClaim.id),
+                title = TextUiModel.StringRes(getRewardTitle(rewardToClaim.id)),
                 subtitle = TextUiModel.StringRes(translations.home_referral_next_unlock),
-                id = rewardToClaim.id,
+                benefits = (rewardToClaim.state as HomeRewardStateDomainModel.Unclaimed).benefits.toUiModel(rewardToClaim.id),
                 onClick = onClaimedRewardClicked,
             )
         }
 
         rewardInProgress != null -> {
             HomeCurrentRewardUiModel.Visible.InProgress(
-                imageDrawableResId = getGemDrawable(rewardInProgress.id),
-                title = TextUiModel.StringRes(getGemTitle(rewardInProgress.id)),
+                imageDrawableResId = getRewardDrawable(rewardInProgress.id),
+                title = TextUiModel.StringRes(getRewardTitle(rewardInProgress.id)),
                 subtitle = TextUiModel.StringRes(translations.home_referral_next_reward),
-                progress = (rewardInProgress.state as HomeRewardDomainModel.HomeRewardStateDomainModel.InProgress).progress,
-                total = (rewardInProgress.state as HomeRewardDomainModel.HomeRewardStateDomainModel.InProgress).total,
+                progress = (rewardInProgress.state as HomeRewardStateDomainModel.InProgress).progress,
+                total = (rewardInProgress.state as HomeRewardStateDomainModel.InProgress).total,
             )
         }
 
@@ -128,10 +145,10 @@ private fun ReferredUserDomainModel.toUiModel(dateFormat: DateFormat): HomeRefer
 }
 
 private fun HomeRewardDomainModel.toHomeRewardUiModel(
-    onClaimedRewardClicked: (String) -> Unit,
+    onClaimedRewardClicked: (HomeRewardBenefitsUiModel) -> Unit,
 ): HomeRewardUiModel {
-    val drawableResId = getGemDrawable(this.id)
-    val title = getGemTitle(this.id)
+    val drawableResId = getRewardDrawable(this.id)
+    val title = getRewardTitle(this.id)
     val subtitle = when (this.id) {
         REWARD_ID_1 -> translations.reward_1_subtitle
         REWARD_ID_2 -> translations.reward_2_subtitle
@@ -151,18 +168,22 @@ private fun HomeRewardDomainModel.toHomeRewardUiModel(
         title = TextUiModel.StringRes(title),
         subtitle = TextUiModel.StringRes(subtitle),
         footer = when (val state = this.state) {
-            is HomeRewardDomainModel.HomeRewardStateDomainModel.InProgress -> HomeRewardFooterUiModel.InProgress(
+            is HomeRewardStateDomainModel.InProgress -> HomeRewardFooterUiModel.InProgress(
                 progress = state.progress / state.total.toFloat(),
             )
 
-            is HomeRewardDomainModel.HomeRewardStateDomainModel.Claimed -> HomeRewardFooterUiModel.Unlocked.Claimed
-            else -> HomeRewardFooterUiModel.Unlocked.UnClaimed(onClick = onClaimedRewardClicked)
+            is HomeRewardStateDomainModel.Unclaimed -> HomeRewardFooterUiModel.Unlocked.UnClaimed(
+                benefits = state.benefits.toUiModel(this.id),
+                onClick = onClaimedRewardClicked,
+            )
+
+            else -> HomeRewardFooterUiModel.Unlocked.Claimed
         },
     )
 }
 
 @DrawableRes
-private fun getGemDrawable(id: String): Int =
+private fun getRewardDrawable(id: String): Int =
     when (id) {
         REWARD_ID_1 -> drawables.reward_1
         REWARD_ID_2 -> drawables.reward_2
@@ -173,7 +194,7 @@ private fun getGemDrawable(id: String): Int =
     }
 
 @StringRes
-private fun getGemTitle(id: String): Int =
+private fun getRewardTitle(id: String): Int =
     when (id) {
         REWARD_ID_1 -> translations.reward_1_title
         REWARD_ID_2 -> translations.reward_2_title
@@ -218,3 +239,43 @@ private fun getPickGemBottomSheetViewState(
         HomePickGemBottomSheetViewState.Hidden
     }
 }
+
+private fun RewardBenefitsDomainModel.toUiModel(rewardId: String): HomeRewardBenefitsUiModel =
+    when (this) {
+        is RewardBenefitsDomainModel.Gem -> HomeRewardBenefitsUiModel.Gem(rewardId = rewardId, gemId = this.gemId)
+        RewardBenefitsDomainModel.FreeSubscription2years -> HomeRewardBenefitsUiModel.FreeSubscription2years(rewardId = rewardId)
+        RewardBenefitsDomainModel.FreeSubscriptionLifeTime -> HomeRewardBenefitsUiModel.FreeSubscriptionLifeTime(rewardId = rewardId)
+        RewardBenefitsDomainModel.Gift -> HomeRewardBenefitsUiModel.Gift(rewardId = rewardId)
+    }
+
+private fun getRewardBenefitsDialogViewState(
+    rewardBenefitsData: HomeRewardBenefitsUiModel?,
+    onClosed: (String) -> Unit,
+    onGemButtonClicked: (String, String) -> Unit,
+): HomeRewardBenefitsDialogViewState =
+    when (rewardBenefitsData) {
+        null -> Hidden
+        is HomeRewardBenefitsUiModel.Gem -> Visible.Gem(
+            rewardId = rewardBenefitsData.rewardId,
+            gemId = rewardBenefitsData.gemId,
+            rewardDrawableResId = getGemDrawable(rewardBenefitsData.gemId),
+            onCloseButtonClicked = onClosed,
+            onSetGemClicked = onGemButtonClicked,
+        )
+
+        is HomeRewardBenefitsUiModel.FreeSubscription2years -> Visible.FreeSubscription2years(
+            rewardId = rewardBenefitsData.rewardId,
+            onCloseButtonClicked = onClosed,
+        )
+
+        is HomeRewardBenefitsUiModel.FreeSubscriptionLifeTime -> Visible.FreeSubscriptionLifeTime(
+            rewardId = rewardBenefitsData.rewardId,
+            onCloseButtonClicked = onClosed,
+        )
+
+        is HomeRewardBenefitsUiModel.Gift -> Visible.Gift(
+            rewardId = rewardBenefitsData.rewardId,
+            onCloseButtonClicked = onClosed,
+        )
+    }
+

@@ -9,6 +9,6 @@ import org.koin.core.annotation.Factory
 class ObserveGemsUseCase(
     private val repository: GemsRepository,
 ) {
-    operator fun invoke(): Flow<List<GemDomainModel>> = repository.observeGems()
 
+    operator fun invoke(): Flow<List<GemDomainModel>> = repository.observeGems()
 }

@@ -13,6 +13,7 @@ import com.gb.opaltest.features.gems.domain.use_cases.SetCurrentGemUseCase
 import com.gb.opaltest.features.home.domain.use_cases.ObserveHomeDataUseCase
 import com.gb.opaltest.features.home.presentation.mappers.toHomeRewardUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeEventsUiModel
+import com.gb.opaltest.features.home.presentation.models.HomeRewardBenefitsUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeViewStateUiModel
 import com.gb.opaltest.features.referral.domain.use_cases.ClearReferredUsersUseCase
 import com.gb.opaltest.features.referral.domain.use_cases.SetReferredUsersUseCase
@@ -46,15 +47,16 @@ class HomeViewModel(
 
     private val shouldShowSimulateReferralsBottomSheetFlow = MutableStateFlow(false)
     private val shouldShowPickGemBottomSheetFlow = MutableStateFlow(false)
+    private val rewardBenefitsDataFlow = MutableStateFlow<HomeRewardBenefitsUiModel?>(null)
 
     private val _eventsFlow = MutableSharedFlow<HomeEventsUiModel>()
     val eventsFlow = _eventsFlow.asSharedFlow()
 
     private val dateFormat by lazy {
-            DateFormat.getDateInstance(
-                DateFormat.SHORT,
-                Locale.getDefault(),
-            )
+        DateFormat.getDateInstance(
+            DateFormat.SHORT,
+            Locale.getDefault(),
+        )
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -64,7 +66,8 @@ class HomeViewModel(
         observeCurrentGemUseCase(),
         shouldShowSimulateReferralsBottomSheetFlow,
         shouldShowPickGemBottomSheetFlow,
-    ).mapLatest { (homeData, gems, currentGem, shouldShowSimulateReferralsBottomSheet, shouldShowPickGemBottomSheet) ->
+        rewardBenefitsDataFlow,
+    ).mapLatest { (homeData, gems, currentGem, shouldShowSimulateReferralsBottomSheet, shouldShowPickGemBottomSheet, rewardBenefitsData) ->
         homeData.toHomeRewardUiModel(
             gems = gems,
             currentGem = currentGem,
@@ -81,6 +84,9 @@ class HomeViewModel(
             onSettingsPickGemClicked = ::onSettingsPickGemClicked,
             onSettingsClearClicked = ::onSettingsClearClicked,
             dateFormat = dateFormat,
+            rewardBenefitsData = rewardBenefitsData,
+            onRewardBenefitsDialogClosed = ::onRewardBenefitsDialogClosed,
+            onRewardBenefitsDialogGemButtonClicked = ::onRewardBenefitsDialogGemButtonClicked
         )
     }.stateIn(
         scope = viewModelScope,
@@ -134,9 +140,24 @@ class HomeViewModel(
         }
     }
 
-    private fun onClaimRewardClicked(rewardId: String) {
+    private fun onClaimRewardClicked(benefits: HomeRewardBenefitsUiModel) {
+        viewModelScope.launch(appCoroutineDispatchers.io) {
+            rewardBenefitsDataFlow.value = benefits
+        }
+    }
+
+    private fun onRewardBenefitsDialogClosed(rewardId: String) {
+        viewModelScope.launch {
+            setClaimedRewardIdUseCase(id = rewardId)
+            rewardBenefitsDataFlow.value = null
+        }
+    }
+
+    private fun onRewardBenefitsDialogGemButtonClicked(rewardId: String, gemId: String) {
         viewModelScope.launch(appCoroutineDispatchers.io) {
             setClaimedRewardIdUseCase(id = rewardId)
+            rewardBenefitsDataFlow.value = null
+            setCurrentGemUseCase(id = gemId)
         }
     }
 
