@@ -68,20 +68,6 @@ fun Project.setupAndroidModule(isApplication: Boolean) {
             targetCompatibility = JavaVersion.VERSION_17
         }
 
-        buildTypes {
-            buildTypes {
-                maybeCreate("debug")
-                maybeCreate("release")
-                named("release") {
-                    isMinifyEnabled = true
-                    proguardFiles(
-                        getDefaultProguardFile("proguard-android-optimize.txt"),
-                        "proguard-rules.pro"
-                    )
-                }
-            }
-        }
-
         configureKotlin()
     }
     extensions.configure<KspExtension> {
