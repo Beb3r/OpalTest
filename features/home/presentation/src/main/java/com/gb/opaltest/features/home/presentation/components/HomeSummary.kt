@@ -1,6 +1,8 @@
 package com.gb.opaltest.features.home.presentation.components
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,6 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.PathEffect
@@ -56,6 +60,7 @@ import com.gb.opaltest.features.home.presentation.models.HomeReferredUserUiModel
 import com.gb.opaltest.features.home.presentation.models.HomeRewardBenefitsUiModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import com.gb.opaltest.core.design.R.drawable as drawables
 import com.gb.opaltest.core.translations.R.string as translations
 
@@ -113,6 +118,15 @@ private fun HomeSummaryCurrentReward(
         mutableStateOf(0.dp)
     }
 
+    var buttonScale by remember {
+        mutableFloatStateOf(1f)
+    }
+
+    val animatedClaimButtonScale by animateFloatAsState(
+        targetValue = buttonScale,
+        animationSpec = spring()
+    )
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -158,8 +172,15 @@ private fun HomeSummaryCurrentReward(
                 )
 
                 if (currentReward is HomeCurrentRewardUiModel.Visible.UnClaimed) {
+                    LaunchedEffect(currentReward) {
+                        delay(500)
+                        buttonScale = 1.25f
+                        delay(150)
+                        buttonScale = 1f
+                    }
                     Label(
                         modifier = Modifier
+                            .scale(animatedClaimButtonScale)
                             .background(Colors.White, shape = RoundedCornerShape(16.dp))
                             .clickable {
                                 currentReward.onClick(currentReward.benefits)
