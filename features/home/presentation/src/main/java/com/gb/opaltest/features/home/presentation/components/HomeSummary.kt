@@ -1,7 +1,9 @@
 package com.gb.opaltest.features.home.presentation.components
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.Spring.DampingRatioLowBouncy
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -64,6 +66,7 @@ import kotlinx.coroutines.delay
 import com.gb.opaltest.core.design.R.drawable as drawables
 import com.gb.opaltest.core.translations.R.string as translations
 
+
 @Composable
 fun HomeSummary(
     modifier: Modifier,
@@ -118,14 +121,19 @@ private fun HomeSummaryCurrentReward(
         mutableStateOf(0.dp)
     }
 
-    var buttonScale by remember {
+    /*var buttonScale by remember {
         mutableFloatStateOf(1f)
     }
 
     val animatedClaimButtonScale by animateFloatAsState(
         targetValue = buttonScale,
-        animationSpec = spring()
-    )
+        animationSpec = spring(
+            dampingRatio = DampingRatioLowBouncy,
+            stiffness = (0.9f * Spring.StiffnessMedium + 0.1f * Spring.StiffnessHigh)
+        ),
+    )*/
+
+    val claimButtonScale = remember { Animatable(1.0f) }
 
     Row(
         modifier = Modifier
@@ -173,14 +181,17 @@ private fun HomeSummaryCurrentReward(
 
                 if (currentReward is HomeCurrentRewardUiModel.Visible.UnClaimed) {
                     LaunchedEffect(currentReward) {
+                        val animationSpec = spring<Float>(
+                            dampingRatio = DampingRatioLowBouncy,
+                            stiffness = (0.9f * Spring.StiffnessMedium + 0.1f * Spring.StiffnessHigh)
+                        )
                         delay(500)
-                        buttonScale = 1.25f
-                        delay(150)
-                        buttonScale = 1f
+                        claimButtonScale.animateTo(1.25f, animationSpec = animationSpec)
+                        claimButtonScale.animateTo(1.0f, animationSpec = animationSpec)
                     }
                     Label(
                         modifier = Modifier
-                            .scale(animatedClaimButtonScale)
+                            .scale(claimButtonScale.value)
                             .background(Colors.White, shape = RoundedCornerShape(16.dp))
                             .clickable {
                                 currentReward.onClick(currentReward.benefits)
