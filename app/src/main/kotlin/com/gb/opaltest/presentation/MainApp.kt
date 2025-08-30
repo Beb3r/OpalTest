@@ -53,7 +53,6 @@ fun MainApp(
                 gemDrawableResId = currentGem.drawableResId,
                 gemId = currentGem.id
             )?.let {
-                Timber.d("TEEST mainapp appData:$it")
                 localAppThemeData = it
             }
         }
