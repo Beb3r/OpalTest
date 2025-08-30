@@ -7,8 +7,11 @@ The menu on the top right corner of the screen allows you to
   I tried to tackle most of the requirements, hope you'll enjoy it.
 
 This is a single acitivity, 100% Compose app with a modular approach. Build logic is handled with Gradle convention plugin and version catalog.
+
 => kotlin, compose, material3, AAC viewmodels, coroutines, koin annotations, coil, datastore
+
 => all sources are flows from datastore, so screens are reactive and support offline (well, there's no network call here but you get the idea)
+
 => main composable observes and collects current gem flow, to automatically update the app theme color (for blurred background, buttons, texts etc) via CompositionLocalProvider
 
 Overall organisation
