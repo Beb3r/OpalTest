@@ -10,6 +10,22 @@ class SetReferredUsersUseCase(
     private val repository: ReferralRepository
 ) {
 
+    private val firstnames = listOf(
+        "Marie",
+        "Peter",
+        "Thibaud",
+        "Julien",
+        "Saskia",
+        "Ugo",
+        "Kenneth",
+        "Thomas",
+        "Marjolaine",
+        "Elise",
+        "Juliette",
+        "Matt",
+        "Olivia"
+    )
+
     suspend operator fun invoke(count: Int) {
         val users = buildSet {
             repeat(count) {
@@ -17,8 +33,8 @@ class SetReferredUsersUseCase(
                 add(
                     ReferredUserDomainModel(
                         id = id,
-                        name = "User $id",
-                        date = Date()
+                        name = firstnames.random(),
+                        date = Date(),
                     )
                 )
             }

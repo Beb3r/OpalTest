@@ -73,7 +73,8 @@ fun HomeSummary(
                 brush = SolidColor(Colors.MediumGrey),
                 shape = RoundedCornerShape(16.dp)
             )
-            .background(color = Colors.Black, shape = RoundedCornerShape(16.dp)),
+            .background(color = Colors.Black, shape = RoundedCornerShape(16.dp))
+            .animateContentSize(),
     ) {
         if (currentReward is HomeCurrentRewardUiModel.Visible) {
 
@@ -95,9 +96,8 @@ fun HomeSummary(
                     )
                 )
             }
-
-            HomeSummaryReferredUsers(referredUsers = referredUsers)
         }
+        HomeSummaryReferredUsers(referredUsers = referredUsers)
     }
 }
 

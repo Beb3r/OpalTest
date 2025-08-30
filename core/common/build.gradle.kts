@@ -8,5 +8,6 @@ android {
 }
 
 dependencies {
+    implementation(libs.compose.sensors)
     implementation(libs.bundles.datastore)
 }
