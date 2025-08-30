@@ -14,7 +14,7 @@ class SplashScreenViewModel(
 
     fun onViewDisplayed() {
         viewModelScope.launch {
-            delay(500)
+            delay(5000)
             navigation.navigateToHome()
         }
     }
