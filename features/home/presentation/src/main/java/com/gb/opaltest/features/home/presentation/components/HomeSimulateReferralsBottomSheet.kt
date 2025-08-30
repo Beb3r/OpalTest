@@ -31,7 +31,6 @@ import com.gb.opaltest.core.design.Title
 import com.gb.opaltest.core.design.components.AppBottomSheet
 import com.gb.opaltest.features.home.presentation.models.HomeSimulateReferralsBottomSheetViewState
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import com.gb.opaltest.core.design.R.drawable as drawables
 import com.gb.opaltest.core.translations.R.string as translations
 

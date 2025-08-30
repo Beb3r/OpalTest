@@ -8,7 +8,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.haze)
     implementation(libs.bundles.coil)
 
     implementation(projects.core.common)
