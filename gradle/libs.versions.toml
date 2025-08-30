@@ -1,6 +1,6 @@
 [versions]
 android-compileSdk = "36"
-android-minSdk = "26"
+android-minSdk = "33"
 android-targetSdk = "36"
 app-versionCode = "1"
 app-versionName = "1.0"
