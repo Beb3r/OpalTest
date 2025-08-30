@@ -1,5 +1,8 @@
 package com.gb.opaltest.features.home.presentation.components
 
+import android.os.VibrationEffect
+import android.os.Vibrator
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -25,9 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -52,8 +53,10 @@ fun HomeRewardBenefitsDialog(
     viewState: HomeRewardBenefitsDialogViewState
 ) {
 
-    if (viewState is Visible) {
-        HomeRewardBenefitsDialogContent(viewState)
+    Crossfade(viewState) { it ->
+        if (it is Visible) {
+            HomeRewardBenefitsDialogContent(it)
+        }
     }
 }
 
@@ -63,10 +66,27 @@ fun HomeRewardBenefitsDialogContent(
 ) {
 
     val context = LocalContext.current
-    val hapticFeedback = LocalHapticFeedback.current
 
     LaunchedEffect(Unit) {
-        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+        val vibrator = context.getSystemService(Vibrator::class.java)
+        val numberOfPulses = 3
+        val pulseDuration = 50L
+        val spaceBetweenPulses = 100L
+        val maxAmplitude = 255
+
+        val timings = LongArray(numberOfPulses * 2)
+        val amplitudes = IntArray(numberOfPulses * 2)
+
+        for (i in 0 until numberOfPulses) {
+            val amplitude =
+                (maxAmplitude * (i + 1) / numberOfPulses)
+            timings[i * 2] = spaceBetweenPulses
+            timings[i * 2 + 1] = pulseDuration
+            amplitudes[i * 2] = 0
+            amplitudes[i * 2 + 1] = amplitude
+        }
+
+        vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1))
     }
 
     Box(
