@@ -11,6 +11,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.palette)
+    implementation(libs.liquidGlass)
     implementation(libs.bundles.coil)
 
     implementation(projects.core.translations)

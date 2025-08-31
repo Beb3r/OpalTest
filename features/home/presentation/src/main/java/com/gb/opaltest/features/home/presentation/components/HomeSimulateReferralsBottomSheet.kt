@@ -1,23 +1,33 @@
 package com.gb.opaltest.features.home.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Slider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -27,9 +37,11 @@ import com.gb.opaltest.core.design.Body
 import com.gb.opaltest.core.design.Colors
 import com.gb.opaltest.core.design.TextSize
 import com.gb.opaltest.core.design.TextWeight
-import com.gb.opaltest.core.design.Title
 import com.gb.opaltest.core.design.components.AppBottomSheet
+import com.gb.opaltest.core.design.components.AppSlider
 import com.gb.opaltest.features.home.presentation.models.HomeSimulateReferralsBottomSheetViewState
+import com.kyant.liquidglass.liquidGlassProvider
+import com.kyant.liquidglass.rememberLiquidGlassProviderState
 import kotlinx.coroutines.launch
 import com.gb.opaltest.core.design.R.drawable as drawables
 import com.gb.opaltest.core.translations.R.string as translations
@@ -85,11 +97,21 @@ fun HomeSimulateReferralsBottomSheetContent(
     onButtonClicked: (Int) -> Unit,
 ) {
 
+    val density = LocalDensity.current
+
     val sliderState =
         rememberSliderState(
             value = referredUsersCount.toFloat(),
             valueRange = 0f..100f,
         )
+
+    var valueWidth by remember {
+        mutableStateOf(0.dp)
+    }
+
+    val providerState = rememberLiquidGlassProviderState(
+        backgroundColor = Colors.White
+    )
 
     Row(
         modifier = Modifier
@@ -115,20 +137,38 @@ fun HomeSimulateReferralsBottomSheetContent(
         }
     }
 
-    Title(
+    Box(
         modifier = Modifier
+            .padding(vertical = 16.dp)
             .fillMaxWidth()
-            .padding(top = 16.dp),
-        text = sliderState.value.toInt().toString(),
-        textAlign = TextAlign.Center,
-        textWeight = TextWeight.MEDIUM,
-        textSize = TextSize.LARGE
-    )
+            .padding(horizontal = 32.dp)
+            .height(IntrinsicSize.Min),
+    ) {
+        Body(
+            modifier = Modifier
+                .background(color = Colors.White, shape = RoundedCornerShape(20.dp))
+                .liquidGlassProvider(providerState)
+                .padding(horizontal = 24.dp, vertical = 16.dp)
+                .onPlaced { layoutCoordinates ->
+                    with(density) {
+                        valueWidth = (layoutCoordinates.size.width.toDp() + 48.dp)
+                    }
+                }
+                .widthIn(min = 32.dp),
+            text = sliderState.value.toInt().toString(),
+            textAlign = TextAlign.Center,
+            textWeight = TextWeight.MEDIUM,
+            textSize = TextSize.LARGE
+        )
 
-    Slider(
-        modifier = Modifier.padding(vertical = 24.dp, horizontal = 32.dp),
-        state = sliderState
-    )
+        AppSlider(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(start = valueWidth + 8.dp),
+            state = sliderState,
+            providerState = providerState,
+        )
+    }
 
     Button(
         modifier = Modifier
